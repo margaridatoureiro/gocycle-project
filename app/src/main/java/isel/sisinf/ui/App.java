@@ -23,6 +23,10 @@ SOFTWARE.
 */
 package isel.sisinf.ui;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+
 import java.util.Scanner;
 import java.util.HashMap;
 
@@ -193,7 +197,19 @@ class UI
 }
 
 public class App{
+    @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception{
-        UI.getInstance().Run();
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("dal-lab");
+
+        try (emf; EntityManager em = emf.createEntityManager()) {
+            System.out.println("Test");
+            em.getTransaction().begin();
+            UI.getInstance().Run();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw e;
+        }
+
     }
 }
