@@ -80,7 +80,7 @@ class UI
     private Option DisplayMenu()
     {
         Option option = Option.Unknown;
-        Scanner s = new Scanner(System.in);
+        Scanner s = new Scanner(System.in); //Scanner closes System.in if you call close(). Don't do it
         try
         {
             // DO NOT CHANGE ANYTHING!
@@ -95,7 +95,6 @@ class UI
             System.out.println("7. Cancel Booking");
             System.out.println("8. About");
             System.out.print(">");
-            s = new Scanner(System.in);
             int result = s.nextInt();
             option = Option.values()[result];
         }
@@ -103,10 +102,7 @@ class UI
         {
             //nothing to do.
         }
-        finally
-        {
-            s.close();
-        }
+        
         return option;
 
     }
