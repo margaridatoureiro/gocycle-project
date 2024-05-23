@@ -1,2 +1,5 @@
 /.idea
 app/src/main/resources/META-INF/persistence.xml
+app/target
+dal/target
+model/target
