@@ -1,2 +1,2 @@
 /.idea
-presistence.xml
+app/src/main/resources/META-INF/persistence.xml
