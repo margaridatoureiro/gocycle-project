@@ -101,4 +101,5 @@ CREATE TABLE ClienteReserva(
 	FOREIGN KEY (reserva, loja) REFERENCES Reserva(noreserva, loja)
 );
 
+end; $$ ;
 commit;
