@@ -45,5 +45,7 @@ public class Pessoa {
     @Column(nullable = false, length = 2)
     private String atrdisc;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "Loja")
+
     // getters and setters
 }
