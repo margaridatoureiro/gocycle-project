@@ -1,7 +1,8 @@
-package com.example.demo.model;
+package isel.sisinf.model;
 
 import jakarta.persistence.*;
-import java.util.Set;
+
+import java.io.Serializable;
 
 /*
  * 

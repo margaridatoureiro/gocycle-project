@@ -1,16 +1,18 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
 start transaction;
 do $$
 begin
 
-drop table if exists public.Pessoa;
-drop table if exists public.Loja;
-drop table if exists public.TelefoneLoja;
-drop table if exists public.Dispositivo;
-drop table if exists public.Bicicleta;
-drop table if exists public.Classica;
-drop table if exists public.Eletrica;
-drop table if exists public.Reserva;
-drop table if exists public.ClienteReserva;
+drop table if exists Pessoa;
+drop table if exists Loja;
+drop table if exists TelefoneLoja;
+drop table if exists Dispositivo;
+drop table if exists Bicicleta;
+drop table if exists Classica;
+drop table if exists Eletrica;
+drop table if exists Reserva;
+drop table if exists ClienteReserva;
 
 
 CREATE TABLE Pessoa(
