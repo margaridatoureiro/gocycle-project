@@ -37,7 +37,7 @@ import jakarta.persistence.StoredProcedureQuery;
 
 public class JPAContext implements IContext{
 
-	private EntityManagerFactory _emf;
+    private EntityManagerFactory _emf;
     private EntityManager _em;
     
 	//Simple implementation for flat transaction support
