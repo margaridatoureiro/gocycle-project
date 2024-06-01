@@ -1,29 +1,25 @@
-package com.example.demo.model;
+package isel.sisinf.model;
 
 import jakarta.persistence.*;
 import java.util.Set;
 
-/*CREATE TABLE Eletrica(
+/*CREATE TABLE Classica(
 	bicicleta integer PRIMARY KEY REFERENCES Bicicleta(id),
-	autonomia integer NOT NULL,
-	velocidade integer NOT NULL
+	nomudanca integer NOT NULL,
+	constraint CHK_Classica_nomudanca CHECK (nomudanca BETWEEN 0 AND 5)
 );
-
  */
 
  @Entity
- @Table(name = "Eletrica")
- public class Eletrica {
+ @Table(name = "Classica")
+ public class Classica {
      @Id
      @OneToOne
      @JoinColumn(name = "bicicleta")
      private Bicicleta bicicleta;
  
      @Column(nullable = false)
-     private Integer autonomia;
- 
-     @Column(nullable = false)
-     private Integer velocidade;
+     private Integer nomudanca;
  
      // getters and setters
  }

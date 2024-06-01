@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package isel.sisinf.model;
 
 import jakarta.persistence.*;
 import java.util.Set;
@@ -45,7 +45,7 @@ public class Pessoa {
     @Column(nullable = false, length = 2)
     private String atrdisc;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "Loja")
+    //@OneToMany(fetch = FetchType.LAZY, mappedBy = "Loja")
 
     // getters and setters
 }
