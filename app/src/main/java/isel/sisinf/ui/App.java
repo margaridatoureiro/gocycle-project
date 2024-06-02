@@ -23,12 +23,19 @@ SOFTWARE.
 */
 package isel.sisinf.ui;
 
+import isel.sisinf.jpa.JPAContext;
+import isel.sisinf.jpa.PessoaDAL.IPessoaRepository;
+import isel.sisinf.jpa.PessoaDAL.PessoaDataMapper;
+import isel.sisinf.jpa.PessoaDAL.PessoaRepository;
+import isel.sisinf.model.Pessoa;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
 import java.util.Scanner;
 import java.util.HashMap;
+
+import static isel.sisinf.ui.App._IPessoaRepository;
 
 interface DbWorker
 {
@@ -116,6 +123,7 @@ class UI
     public void Run() throws Exception
     {
         // DO NOT CHANGE ANYTHING!
+
         Option userInput;
         do
         {
@@ -146,10 +154,35 @@ class UI
     */
 
     private static final int TAB_SIZE = 24;
+    static String inputData(String prompt) {
+        // IMPLEMENTED
+        System.out.println(prompt);
+        System.out.print(">");
+
+        return new Scanner(System.in).nextLine();
+    }
 
     private void createCostumer() {
-        // TODO
-        System.out.println("createCostumer()");
+        System.out.println("createCustomer()");
+
+        // Collecting all necessary data
+        String name = inputData("Input name");
+        String address = inputData("Input address");
+        String email = inputData("Input email");
+        String phone = inputData("Input phone number");
+        String idNumber = inputData("Input identification number");
+        String nationality = inputData("Input nationality");
+        String disciplinaryAttribute = inputData("Input disciplinary attribute");
+
+        // Creating a new Pessoa object
+
+        Pessoa customer = new Pessoa(name, address, email, phone, idNumber, nationality, disciplinaryAttribute);
+
+        _IPessoaRepository.create(customer);
+        System.out.println("Customer created successfully!");
+
+
+
     }
   
     private void listExistingBikes()
@@ -192,16 +225,26 @@ class UI
     }
 }
 
+
+
 public class App{
     @SuppressWarnings("unchecked")
+    static IPessoaRepository _IPessoaRepository;
     public static void main(String[] args) throws Exception{
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("dal-lab");
+        _IPessoaRepository = new PessoaRepository();
+       // EntityManagerFactory emf = Persistence.createEntityManagerFactory("dal-lab");
 
-        try (emf; EntityManager em = emf.createEntityManager()) {
+        try (JPAContext ctx = new JPAContext()) {
+
             System.out.println("Test");
-            em.getTransaction().begin();
+
             UI.getInstance().Run();
+
+
+
+
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw e;

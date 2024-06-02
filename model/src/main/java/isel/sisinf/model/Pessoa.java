@@ -47,5 +47,83 @@ public class Pessoa {
 
     //@OneToMany(fetch = FetchType.LAZY, mappedBy = "Loja")
 
-    // getters and setters
+    public Pessoa() {
+    }
+
+    // Parameterized constructor
+    public Pessoa(String nome, String morada, String email, String telefone, String noident, String nacionalidade, String atrdisc) {
+        this.nome = nome;
+        this.morada = morada;
+        this.email = email;
+        this.telefone = telefone;
+        this.noident = noident;
+        this.nacionalidade = nacionalidade;
+        this.atrdisc = atrdisc;
+    }
+
+    // Getters and setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getMorada() {
+        return morada;
+    }
+
+    public void setMorada(String morada) {
+        this.morada = morada;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public String getNoident() {
+        return noident;
+    }
+
+    public void setNoident(String noident) {
+        this.noident = noident;
+    }
+
+    public String getNacionalidade() {
+        return nacionalidade;
+    }
+
+    public void setNacionalidade(String nacionalidade) {
+        this.nacionalidade = nacionalidade;
+    }
+
+    public String getAtrdisc() {
+        return atrdisc;
+    }
+
+    public void setAtrdisc(String atrdisc) {
+        this.atrdisc = atrdisc;
+    }
 }
