@@ -4,15 +4,15 @@ start transaction;
 do $$
 begin
 
-drop table if exists Pessoa;
-drop table if exists Loja;
-drop table if exists TelefoneLoja;
-drop table if exists Dispositivo;
-drop table if exists Bicicleta;
-drop table if exists Classica;
-drop table if exists Eletrica;
-drop table if exists Reserva;
-drop table if exists ClienteReserva;
+DROP TABLE IF EXISTS ClienteReserva;
+DROP TABLE IF EXISTS Reserva CASCADE;
+DROP TABLE IF EXISTS Eletrica;
+DROP TABLE IF EXISTS Classica;
+DROP TABLE IF EXISTS Bicicleta CASCADE;
+DROP TABLE IF EXISTS Dispositivo CASCADE;
+DROP TABLE IF EXISTS TelefoneLoja; 
+DROP TABLE IF EXISTS Loja CASCADE;
+DROP TABLE IF EXISTS Pessoa CASCADE;
 
 
 CREATE TABLE Pessoa(

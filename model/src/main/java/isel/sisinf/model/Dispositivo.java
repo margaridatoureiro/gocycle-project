@@ -5,22 +5,11 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.Set;
 
-/*
-CREATE TABLE Dispositivo(
-	noserie integer PRIMARY KEY,
-	latitude numeric(6,4) NOT NULL,
-	longitude numeric(6,4) NOT NULL,
-	bateria integer NOT NULL,
-	constraint CHK_Dispositivo_bateria CHECK (bateria BETWEEN 0 AND 100)
-);
- */
-
-
  @Entity
- @Table(name = "Dispositivo")
  public class Dispositivo {
      @Id
-     private Integer noserie;
+     @GeneratedValue(strategy = GenerationType.IDENTITY)
+     private long noserie;
  
      @Column(nullable = false, precision = 6, scale = 4)
      private BigDecimal latitude;
@@ -30,6 +19,36 @@ CREATE TABLE Dispositivo(
  
      @Column(nullable = false)
      private Integer bateria;
- 
-     // getters and setters
+
+     public long getNoserie() {
+         return noserie;
+     }
+
+     public void setNoserie(long noserie) {
+         this.noserie = noserie;
+     }
+
+     public BigDecimal getLatitude() {
+         return latitude;
+     }
+
+     public void setLatitude(BigDecimal latitude) {
+         this.latitude = latitude;
+     }
+
+     public BigDecimal getLongitude() {
+         return longitude;
+     }
+
+     public void setLongitude(BigDecimal longitude) {
+         this.longitude = longitude;
+     }
+
+     public Integer getBateria() {
+         return bateria;
+     }
+
+     public void setBateria(Integer bateria) {
+         this.bateria = bateria;
+     }
  }

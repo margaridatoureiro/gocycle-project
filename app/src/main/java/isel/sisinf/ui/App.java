@@ -23,19 +23,13 @@ SOFTWARE.
 */
 package isel.sisinf.ui;
 
-import isel.sisinf.jpa.JPAContext;
-import isel.sisinf.jpa.PessoaDAL.IPessoaRepository;
-import isel.sisinf.jpa.PessoaDAL.PessoaDataMapper;
+import isel.sisinf.jpa.BicicletaDAL.BicicletaRepository;
 import isel.sisinf.jpa.PessoaDAL.PessoaRepository;
+import isel.sisinf.model.Bicicleta;
 import isel.sisinf.model.Pessoa;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 
-import java.util.Scanner;
-import java.util.HashMap;
+import java.util.*;
 
-import static isel.sisinf.ui.App._IPessoaRepository;
 
 interface DbWorker
 {
@@ -154,13 +148,55 @@ class UI
     */
 
     private static final int TAB_SIZE = 24;
+
+    // FUNCTION TO GET USER INPUT
     static String inputData(String prompt) {
-        // IMPLEMENTED
         System.out.println(prompt);
         System.out.print(">");
 
         return new Scanner(System.in).nextLine();
     }
+
+    // FUNCTION TO DISPLAY DATA IN A TABLE FORMAT
+    public static void displayTable(List<String> headers, List<List<Object>> rows) {
+        // Calculate the maximum length for each column
+        int numColumns = headers.size();
+        int[] maxLengths = new int[numColumns];
+        for (int i = 0; i < numColumns; i++) {
+            maxLengths[i] = headers.get(i).length();
+        }
+        for (List<Object> row : rows) {
+            for (int i = 0; i < numColumns; i++) {
+                String cellContent = row.get(i).toString();
+                maxLengths[i] = Math.max(maxLengths[i], cellContent.length());
+            }
+        }
+        // Print headers
+        for (int i = 0; i < numColumns; i++) {
+            String header = headers.get(i);
+            System.out.print(header);
+            printSpaces(maxLengths[i] - header.length() + 2); // Add 2 extra spaces for padding
+        }
+        System.out.println();
+
+        // Print rows
+        for (List<Object> row : rows) {
+            for (int i = 0; i < numColumns; i++) {
+                String cellContent = row.get(i).toString();
+                System.out.print(cellContent);
+                printSpaces(maxLengths[i] - cellContent.length() + 2); // Add 2 extra spaces for padding
+            }
+            System.out.println();
+        }
+    }
+
+    // Helper function to print spaces
+    private static void printSpaces(int numSpaces) {
+        for (int i = 0; i < numSpaces; i++) {
+            System.out.print(" ");
+        }
+    }
+
 
     private void createCostumer() {
         System.out.println("createCustomer()");
@@ -172,24 +208,48 @@ class UI
         String phone = inputData("Input phone number");
         String idNumber = inputData("Input identification number");
         String nationality = inputData("Input nationality");
-        String disciplinaryAttribute = inputData("Input disciplinary attribute");
+        String disciplinaryAttribute = "C";
 
         // Creating a new Pessoa object
-
         Pessoa customer = new Pessoa(name, address, email, phone, idNumber, nationality, disciplinaryAttribute);
 
-        _IPessoaRepository.create(customer);
-        System.out.println("Customer created successfully!");
+        // Initializing the repository
+        PessoaRepository repo = new PessoaRepository();
 
-
-
+        // send customer to repository to be created
+        repo.create(customer);
     }
   
-    private void listExistingBikes()
-    {
-        // TODO
+    private void listExistingBikes() {
         System.out.println("listExistingBikes()");
+
+        // Initializing the repository
+        BicicletaRepository repo = new BicicletaRepository();
+
+        // Getting all bikes from repo
+        List<Bicicleta> rows = repo.getAll().stream().toList();
+
+        // Creating table headers and rows to print
+        List<String> headers = List.of("Id", "Peso", "Raio", "Modelo", "Marca", "Mudanca", "Estado", "Atrdisc", "Dispositivo");
+        List<List<Object>> formattedRows = new ArrayList<>();
+
+        for (Bicicleta bicicleta : rows) {
+            List<Object> row = new ArrayList<>();
+            row.add(bicicleta.getId());
+            row.add(bicicleta.getPeso());
+            row.add(bicicleta.getRaio());
+            row.add(bicicleta.getModelo());
+            row.add(bicicleta.getMarca());
+            row.add(bicicleta.getMudanca());
+            row.add(bicicleta.getEstado());
+            row.add(bicicleta.getAtrdisc());
+            row.add(bicicleta.getNoserie());
+            formattedRows.add(row);
+        }
+        // Displaying the obtained rows in a nice format
+        displayTable(headers, formattedRows);
     }
+
 
     private void checkBikeAvailability()
     {
@@ -218,9 +278,10 @@ class UI
     }
     private void about()
     {
-        // TODO: Add your Group ID & member names
-        System.out.println("DAL version:"+ isel.sisinf.jpa.Dal.version());
-        System.out.println("Core version:"+ isel.sisinf.model.Core.version());
+        System.out.println("Group members:");
+        System.out.println(" - Manuel Fonseca");
+        System.out.println(" - Margarida Toureiro");
+        System.out.println(" - Ricardo Almeida");
         
     }
 }
@@ -228,27 +289,7 @@ class UI
 
 
 public class App{
-    @SuppressWarnings("unchecked")
-    static IPessoaRepository _IPessoaRepository;
     public static void main(String[] args) throws Exception{
-
-        _IPessoaRepository = new PessoaRepository();
-       // EntityManagerFactory emf = Persistence.createEntityManagerFactory("dal-lab");
-
-        try (JPAContext ctx = new JPAContext()) {
-
-            System.out.println("Test");
-
-            UI.getInstance().Run();
-
-
-
-
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            throw e;
-        }
-
+        UI.getInstance().Run();
     }
 }
