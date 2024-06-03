@@ -23,19 +23,14 @@ SOFTWARE.
 */
 package isel.sisinf.ui;
 
+import isel.sisinf.jpa.BicicletaDAL.IBicicletaRepository;
 import isel.sisinf.jpa.JPAContext;
 import isel.sisinf.jpa.PessoaDAL.IPessoaRepository;
-import isel.sisinf.jpa.PessoaDAL.PessoaDataMapper;
-import isel.sisinf.jpa.PessoaDAL.PessoaRepository;
+import isel.sisinf.model.Bicicleta;
 import isel.sisinf.model.Pessoa;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 
-import java.util.Scanner;
-import java.util.HashMap;
+import java.util.*;
 
-import static isel.sisinf.ui.App._IPessoaRepository;
 
 interface DbWorker
 {
@@ -64,7 +59,13 @@ class UI
     {
         // DO NOT CHANGE ANYTHING!
         __dbMethods = new HashMap<Option,DbWorker>();
-        __dbMethods.put(Option.createCostumer, () -> UI.this.createCostumer());
+        __dbMethods.put(Option.createCostumer, () -> {
+            try {
+                UI.this.createCostumer();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
         __dbMethods.put(Option.listExistingBikes, () -> UI.this.listExistingBikes()); 
         __dbMethods.put(Option.checkBikeAvailability, () -> UI.this.checkBikeAvailability());
         __dbMethods.put(Option.obtainBookings, new DbWorker() {public void doWork() {UI.this.obtainBookings();}});
@@ -154,15 +155,56 @@ class UI
     */
 
     private static final int TAB_SIZE = 24;
+
     static String inputData(String prompt) {
-        // IMPLEMENTED
         System.out.println(prompt);
         System.out.print(">");
 
         return new Scanner(System.in).nextLine();
     }
 
-    private void createCostumer() {
+    // FUNCTION TO DISPLAY IN A TABLE FORMAT
+    public static void displayTable(List<String> headers, List<List<Object>> rows) {
+        // Calculate the maximum length for each column
+        int numColumns = headers.size();
+        int[] maxLengths = new int[numColumns];
+        for (int i = 0; i < numColumns; i++) {
+            maxLengths[i] = headers.get(i).length();
+        }
+        for (List<Object> row : rows) {
+            for (int i = 0; i < numColumns; i++) {
+                String cellContent = row.get(i).toString();
+                maxLengths[i] = Math.max(maxLengths[i], cellContent.length());
+            }
+        }
+        // Print headers
+        for (int i = 0; i < numColumns; i++) {
+            String header = headers.get(i);
+            System.out.print(header);
+            printSpaces(maxLengths[i] - header.length() + 2); // Add 2 extra spaces for padding
+        }
+        System.out.println();
+
+        // Print rows
+        for (List<Object> row : rows) {
+            for (int i = 0; i < numColumns; i++) {
+                String cellContent = row.get(i).toString();
+                System.out.print(cellContent);
+                printSpaces(maxLengths[i] - cellContent.length() + 2); // Add 2 extra spaces for padding
+            }
+            System.out.println();
+        }
+    }
+
+    // Helper function to print spaces
+    private static void printSpaces(int numSpaces) {
+        for (int i = 0; i < numSpaces; i++) {
+            System.out.print(" ");
+        }
+    }
+
+
+    private void createCostumer() throws Exception {
         System.out.println("createCustomer()");
 
         // Collecting all necessary data
@@ -172,24 +214,63 @@ class UI
         String phone = inputData("Input phone number");
         String idNumber = inputData("Input identification number");
         String nationality = inputData("Input nationality");
-        String disciplinaryAttribute = inputData("Input disciplinary attribute");
+        String disciplinaryAttribute = "C";
 
         // Creating a new Pessoa object
-
         Pessoa customer = new Pessoa(name, address, email, phone, idNumber, nationality, disciplinaryAttribute);
 
-        _IPessoaRepository.create(customer);
-        System.out.println("Customer created successfully!");
-
-
+        // Creating a new JPA context and initializing the repository to create a customer
+        try (JPAContext ctx = new JPAContext()) {
+            ctx.beginTransaction();
+            IPessoaRepository repo = ctx.getPessoaRepository();
+            repo.create(customer);
+            ctx.commit();
+            System.out.println("Customer created successfully!");
+        } catch (Exception e) {
+            System.err.println("Error creating customer: " + e.getMessage());
+            e.printStackTrace();
+        }
 
     }
   
     private void listExistingBikes()
     {
-        // TODO
         System.out.println("listExistingBikes()");
+        // Creating a new JPA context and initializing the repository
+        try (JPAContext ctx = new JPAContext()) {
+            ctx.beginTransaction();
+            IBicicletaRepository repo = ctx.getBicicletaRepository();
+            // Getting all bikes from repo
+            List<Bicicleta> rows = repo.getAll().stream().toList();
+
+            // Creating table headers and rows to print
+            List<String> headers = List.of("Id", "Peso", "Raio", "Modelo", "Marca", "Mudanca", "Estado", "Atrdisc", "Dispositivo");
+            List<List<Object>> formattedRows = new ArrayList<>();
+
+            for (Bicicleta bicicleta : rows) {
+                List<Object> row = new ArrayList<>();
+                row.add(bicicleta.getId());
+                row.add(bicicleta.getPeso());
+                row.add(bicicleta.getRaio());
+                row.add(bicicleta.getModelo());
+                row.add(bicicleta.getMarca());
+                row.add(bicicleta.getMudanca());
+                row.add(bicicleta.getEstado());
+                row.add(bicicleta.getAtrdisc());
+                row.add(bicicleta.getNoserie());
+                formattedRows.add(row);
+            }
+
+            // Displaying the obtained rows in a nice format
+            displayTable(headers, formattedRows);
+            ctx.commit();
+
+        } catch (Exception e) {
+            System.err.println("Error listing bikes: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
+
 
     private void checkBikeAvailability()
     {
@@ -218,9 +299,10 @@ class UI
     }
     private void about()
     {
-        // TODO: Add your Group ID & member names
-        System.out.println("DAL version:"+ isel.sisinf.jpa.Dal.version());
-        System.out.println("Core version:"+ isel.sisinf.model.Core.version());
+        System.out.println("Group members:");
+        System.out.println(" - Manuel Fonseca");
+        System.out.println(" - Margarida Toureiro");
+        System.out.println(" - Ricardo Almeida");
         
     }
 }
@@ -229,22 +311,9 @@ class UI
 
 public class App{
     @SuppressWarnings("unchecked")
-    static IPessoaRepository _IPessoaRepository;
     public static void main(String[] args) throws Exception{
-
-        _IPessoaRepository = new PessoaRepository();
-       // EntityManagerFactory emf = Persistence.createEntityManagerFactory("dal-lab");
-
-        try (JPAContext ctx = new JPAContext()) {
-
-            System.out.println("Test");
-
+        try {
             UI.getInstance().Run();
-
-
-
-
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw e;

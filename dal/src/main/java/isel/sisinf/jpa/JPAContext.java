@@ -23,8 +23,13 @@ SOFTWARE.
 */
 package isel.sisinf.jpa;
 
+import java.util.Collection;
 import java.util.List;
 
+import isel.sisinf.jpa.BicicletaDAL.IBicicletaRepository;
+import isel.sisinf.jpa.PessoaDAL.IPessoaRepository;
+import isel.sisinf.model.Bicicleta;
+import isel.sisinf.model.Pessoa;
 import org.eclipse.persistence.sessions.DatabaseLogin;
 import org.eclipse.persistence.sessions.Session;
 
@@ -39,15 +44,13 @@ public class JPAContext implements IContext{
 
     private EntityManagerFactory _emf;
     private EntityManager _em;
-    
-	//Simple implementation for flat transaction support
+
     private EntityTransaction _tx;
-	//b) What is the purpose of _txCount?
     private int _txcount;
-    
-	/* private ICountryRepository _countryRepository;
-    private IStudentRepository _studentRepository;
-    private ICourseRepository _courseRepository; */
+
+	private IPessoaRepository _pessoaRepository;
+	private IBicicletaRepository _bicicletaRepository;
+
     
 /// HELPER METHODS    
     protected List helperQueryImpl(String jpql, Object... params)
@@ -62,110 +65,113 @@ public class JPAContext implements IContext{
     
     protected Object helperCreateImpl(Object entity)
     {
-    	beginTransaction(); //Each write can have multiple inserts on the DB. See the relations mapping.
+    	beginTransaction();
 		_em.persist(entity);
-		commit(); //c) Why can we commit a transaction here, if other commands can be sent to the database?
-		return entity;	
+		commit();
+		return entity;
     }
     
     protected Object helperUpdateImpl(Object entity)
     {
-    	beginTransaction(); //Each write can have multiple inserts on the DB. See the relations mapping.
-		_em.merge(entity); //d) What does merge do?
+    	beginTransaction();
+		_em.merge(entity);
 		commit();
 		return entity;	
     }
     
     protected Object helperDeleteteImpl(Object entity)
     {
-    	beginTransaction(); //Each write can have multiple inserts on the DB. See the relations.
+    	beginTransaction();
 		_em.remove(entity);
 		commit();
 		return entity;
     }
-/// END HELPER    
-/* 
-    protected class CountryRepository implements ICountryRepository
-    {
+/// END HELPER
 
-		//TODO
-
-    }
-   */ 
-    /*protected class StudentRepository implements IStudentRepository
-    {
+	protected class PessoaRepository implements IPessoaRepository {
 
 		@Override
-		public Student findByKey(Integer key) {
-			return _em.createNamedQuery("Student.findByKey",Student.class)
-					 .setParameter("key", key)
-	            	  .getSingleResult();
+		public Pessoa create(Pessoa entity) {
+			return (Pessoa) helperCreateImpl(entity);
+		}
+
+		@Override
+		public Collection<Pessoa> getAll() {
+			return _em.createNamedQuery("Pessoa.getAll",Pessoa.class)
+					.getResultList();
+		}
+
+		@Override
+		public Pessoa findByKey(Integer key) {
+			return _em.createNamedQuery("Pessoa.findByKey", Pessoa.class)
+					.setParameter("key", key)
+					.getSingleResult();
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public Collection<Student> find(String jpql, Object... params) {
-			
+		public Collection<Pessoa> find(String jpql, Object... params) {
 			return helperQueryImpl( jpql, params);
 		}
-    	
+
 		@Override
-		public Collection<Student> getEnrolledStudents(Course c){
-			return _em.createNamedQuery("Student.EnrolledInCourse",Student.class)
-			 .setParameter("key", c.getCourseId())
-			 .getResultList();
+		public Pessoa update(Pessoa entity) {
+			return (Pessoa) helperUpdateImpl(entity);
 		}
 
 		@Override
-		public Student create(Student entity) {
-			return (Student)helperCreateImpl(entity);
+		public Pessoa delete(Pessoa entity) {
+			return (Pessoa) helperDeleteteImpl(entity);
 		}
 
 		@Override
-		public Student update(Student entity) {
-			return (Student)helperUpdateImpl(entity);
+		public Pessoa save(Pessoa entity) {
+			return null;
+		}
+	}
+
+	protected class BicicletaRepository implements IBicicletaRepository {
+
+		@Override
+		public Bicicleta create(Bicicleta entity) {
+			return (Bicicleta) helperCreateImpl(entity);
 		}
 
 		@Override
-		public Student delete(Student entity) {
-			return (Student)helperDeleteteImpl(entity);
+		public Collection<Bicicleta> getAll() {
+			return _em.createNamedQuery("Bicicleta.getAll", Bicicleta.class)
+					.getResultList();
 		}
-		
-    }
-    
-    protected class CourseRepository implements ICourseRepository
-    {
 
 		@Override
-		public Course findByKey(Long key) {
-			return _em.createNamedQuery("Course.findByKey",Course.class)
-					 .setParameter("key", key)
-	            	  .getSingleResult();
+		public Bicicleta findByKey(Integer key) {
+			return _em.createNamedQuery("Bicicleta.findByKey", Bicicleta.class)
+					.setParameter("key", key)
+					.getSingleResult();
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public Collection<Course> find(String jpql, Object... params) {
+		public Collection<Bicicleta> find(String jpql, Object... params) {
 			return helperQueryImpl( jpql, params);
 		}
 
 		@Override
-		public Course create(Course entity) {
-			return (Course)helperCreateImpl(entity);
+		public Bicicleta update(Bicicleta entity) {
+			return (Bicicleta) helperUpdateImpl(entity);
 		}
 
 		@Override
-		public Course update(Course entity) {
-			return (Course)helperUpdateImpl(entity);
+		public Bicicleta delete(Bicicleta entity) {
+			return (Bicicleta) helperDeleteteImpl(entity);
 		}
 
 		@Override
-		public Course delete(Course entity) {
-			return (Course)helperDeleteteImpl(entity);
+		public Bicicleta save(Bicicleta entity) {
+			return null;
 		}
-    	
-		
-    }*/
+	}
+
     
 	@Override
 	public void beginTransaction() {
@@ -237,12 +243,11 @@ public class JPAContext implements IContext{
 	
 		this._emf = Persistence.createEntityManagerFactory(persistentCtx);
 		this._em = _emf.createEntityManager();
-		//this._countryRepository = new CountryRepository();
-/*		this._studentRepository = new StudentRepository();
-		this._courseRepository = new CourseRepository();*/
+
+		this._pessoaRepository = new PessoaRepository();
+		this._bicicletaRepository = new BicicletaRepository();
 	}
 
-	
 
 	@Override
 	public void close() throws Exception {
@@ -253,24 +258,18 @@ public class JPAContext implements IContext{
         _emf.close();
 	}
 
-	//@Override
-/*	public ICountryRepository getCountries() {
-		//return _countryRepository;
-		return null; //TODO
+	@Override
+	public IPessoaRepository getPessoaRepository() {
+		return _pessoaRepository;
 	}
 
 	@Override
-	public IStudentRepository getStudents() {
-		
-		return _studentRepository;
+	public IBicicletaRepository getBicicletaRepository() {
+		return _bicicletaRepository;
 	}
-	@Override
-	public ICourseRepository getCourses() {
-		return _courseRepository;
-	}*/
+
 /// functions and stored procedure
 	//Example using a scalar function
-	//n) what createNamedStoredProcedureQuery does?
 	public java.math.BigDecimal rand_fx(int seed) {
 	
 		StoredProcedureQuery namedrand_fx = 

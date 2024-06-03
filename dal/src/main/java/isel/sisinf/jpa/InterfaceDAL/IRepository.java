@@ -25,7 +25,6 @@ package isel.sisinf.jpa.InterfaceDAL;
 
 import java.util.Collection;
 
-// e) explain why we need three generic types: T, TCol and TK?
 public interface IRepository<T,TCol,TK> {
 	Collection<T> getAll(); // READ ALL
 	T findByKey(TK key); // READ ONE

@@ -2,15 +2,15 @@ package isel.sisinf.jpa.PessoaDAL;
 
 import isel.sisinf.jpa.InterfaceDAL.IDataMapper;
 import isel.sisinf.model.Pessoa;
+import jakarta.persistence.Query;
 
 import java.util.Collection;
+import java.util.List;
 
 public class PessoaRepository implements IPessoaRepository {
 
-
     @Override
     public Pessoa create(Pessoa entity) {
-
         return null;
     }
 
