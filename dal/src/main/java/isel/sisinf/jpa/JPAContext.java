@@ -23,13 +23,7 @@ SOFTWARE.
 */
 package isel.sisinf.jpa;
 
-import java.util.Collection;
 import java.util.List;
-
-import isel.sisinf.jpa.BicicletaDAL.IBicicletaRepository;
-import isel.sisinf.jpa.PessoaDAL.IPessoaRepository;
-import isel.sisinf.model.Bicicleta;
-import isel.sisinf.model.Pessoa;
 import org.eclipse.persistence.sessions.DatabaseLogin;
 import org.eclipse.persistence.sessions.Session;
 
@@ -48,12 +42,9 @@ public class JPAContext implements IContext{
     private EntityTransaction _tx;
     private int _txcount;
 
-	private IPessoaRepository _pessoaRepository;
-	private IBicicletaRepository _bicicletaRepository;
-
     
 /// HELPER METHODS    
-    protected List helperQueryImpl(String jpql, Object... params)
+    public List helperQueryImpl(String jpql, Object... params)
     {
     	Query q = _em.createQuery(jpql);
 
@@ -63,7 +54,7 @@ public class JPAContext implements IContext{
 		return q.getResultList();
     }
     
-    protected Object helperCreateImpl(Object entity)
+    public Object helperCreateImpl(Object entity)
     {
     	beginTransaction();
 		_em.persist(entity);
@@ -71,7 +62,7 @@ public class JPAContext implements IContext{
 		return entity;
     }
     
-    protected Object helperUpdateImpl(Object entity)
+    public Object helperUpdateImpl(Object entity)
     {
     	beginTransaction();
 		_em.merge(entity);
@@ -79,7 +70,7 @@ public class JPAContext implements IContext{
 		return entity;	
     }
     
-    protected Object helperDeleteteImpl(Object entity)
+    public Object helperDeleteteImpl(Object entity)
     {
     	beginTransaction();
 		_em.remove(entity);
@@ -88,91 +79,6 @@ public class JPAContext implements IContext{
     }
 /// END HELPER
 
-	protected class PessoaRepository implements IPessoaRepository {
-
-		@Override
-		public Pessoa create(Pessoa entity) {
-			return (Pessoa) helperCreateImpl(entity);
-		}
-
-		@Override
-		public Collection<Pessoa> getAll() {
-			return _em.createNamedQuery("Pessoa.getAll",Pessoa.class)
-					.getResultList();
-		}
-
-		@Override
-		public Pessoa findByKey(Integer key) {
-			return _em.createNamedQuery("Pessoa.findByKey", Pessoa.class)
-					.setParameter("key", key)
-					.getSingleResult();
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public Collection<Pessoa> find(String jpql, Object... params) {
-			return helperQueryImpl( jpql, params);
-		}
-
-		@Override
-		public Pessoa update(Pessoa entity) {
-			return (Pessoa) helperUpdateImpl(entity);
-		}
-
-		@Override
-		public Pessoa delete(Pessoa entity) {
-			return (Pessoa) helperDeleteteImpl(entity);
-		}
-
-		@Override
-		public Pessoa save(Pessoa entity) {
-			return null;
-		}
-	}
-
-	protected class BicicletaRepository implements IBicicletaRepository {
-
-		@Override
-		public Bicicleta create(Bicicleta entity) {
-			return (Bicicleta) helperCreateImpl(entity);
-		}
-
-		@Override
-		public Collection<Bicicleta> getAll() {
-			return _em.createNamedQuery("Bicicleta.getAll", Bicicleta.class)
-					.getResultList();
-		}
-
-		@Override
-		public Bicicleta findByKey(Integer key) {
-			return _em.createNamedQuery("Bicicleta.findByKey", Bicicleta.class)
-					.setParameter("key", key)
-					.getSingleResult();
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public Collection<Bicicleta> find(String jpql, Object... params) {
-			return helperQueryImpl( jpql, params);
-		}
-
-		@Override
-		public Bicicleta update(Bicicleta entity) {
-			return (Bicicleta) helperUpdateImpl(entity);
-		}
-
-		@Override
-		public Bicicleta delete(Bicicleta entity) {
-			return (Bicicleta) helperDeleteteImpl(entity);
-		}
-
-		@Override
-		public Bicicleta save(Bicicleta entity) {
-			return null;
-		}
-	}
-
-    
 	@Override
 	public void beginTransaction() {
 		if(_tx == null)
@@ -243,29 +149,24 @@ public class JPAContext implements IContext{
 	
 		this._emf = Persistence.createEntityManagerFactory(persistentCtx);
 		this._em = _emf.createEntityManager();
-
-		this._pessoaRepository = new PessoaRepository();
-		this._bicicletaRepository = new BicicletaRepository();
 	}
 
 
 	@Override
 	public void close() throws Exception {
-		
+
         if(_tx != null)
         	_tx.rollback();
         _em.close();
         _emf.close();
 	}
 
-	@Override
-	public IPessoaRepository getPessoaRepository() {
-		return _pessoaRepository;
+	public EntityManagerFactory getEntityManagerFactory() {
+		return _emf;
 	}
 
-	@Override
-	public IBicicletaRepository getBicicletaRepository() {
-		return _bicicletaRepository;
+	public EntityManager getEntityManager() {
+		return _em;
 	}
 
 /// functions and stored procedure

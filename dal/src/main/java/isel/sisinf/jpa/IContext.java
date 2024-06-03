@@ -35,8 +35,5 @@ public interface IContext extends AutoCloseable {
 	 void flush();
 	 void clear();
 	 void persist(Object entity);
-
-	 IPessoaRepository getPessoaRepository();
-	 IBicicletaRepository getBicicletaRepository();
      
 }

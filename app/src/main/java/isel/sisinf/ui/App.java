@@ -23,9 +23,8 @@ SOFTWARE.
 */
 package isel.sisinf.ui;
 
-import isel.sisinf.jpa.BicicletaDAL.IBicicletaRepository;
-import isel.sisinf.jpa.JPAContext;
-import isel.sisinf.jpa.PessoaDAL.IPessoaRepository;
+import isel.sisinf.jpa.BicicletaDAL.BicicletaRepository;
+import isel.sisinf.jpa.PessoaDAL.PessoaRepository;
 import isel.sisinf.model.Bicicleta;
 import isel.sisinf.model.Pessoa;
 
@@ -59,13 +58,7 @@ class UI
     {
         // DO NOT CHANGE ANYTHING!
         __dbMethods = new HashMap<Option,DbWorker>();
-        __dbMethods.put(Option.createCostumer, () -> {
-            try {
-                UI.this.createCostumer();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
+        __dbMethods.put(Option.createCostumer, () -> UI.this.createCostumer());
         __dbMethods.put(Option.listExistingBikes, () -> UI.this.listExistingBikes()); 
         __dbMethods.put(Option.checkBikeAvailability, () -> UI.this.checkBikeAvailability());
         __dbMethods.put(Option.obtainBookings, new DbWorker() {public void doWork() {UI.this.obtainBookings();}});
@@ -156,6 +149,7 @@ class UI
 
     private static final int TAB_SIZE = 24;
 
+    // FUNCTION TO GET USER INPUT
     static String inputData(String prompt) {
         System.out.println(prompt);
         System.out.print(">");
@@ -163,7 +157,7 @@ class UI
         return new Scanner(System.in).nextLine();
     }
 
-    // FUNCTION TO DISPLAY IN A TABLE FORMAT
+    // FUNCTION TO DISPLAY DATA IN A TABLE FORMAT
     public static void displayTable(List<String> headers, List<List<Object>> rows) {
         // Calculate the maximum length for each column
         int numColumns = headers.size();
@@ -204,7 +198,7 @@ class UI
     }
 
 
-    private void createCostumer() throws Exception {
+    private void createCostumer() {
         System.out.println("createCustomer()");
 
         // Collecting all necessary data
@@ -219,56 +213,41 @@ class UI
         // Creating a new Pessoa object
         Pessoa customer = new Pessoa(name, address, email, phone, idNumber, nationality, disciplinaryAttribute);
 
-        // Creating a new JPA context and initializing the repository to create a customer
-        try (JPAContext ctx = new JPAContext()) {
-            ctx.beginTransaction();
-            IPessoaRepository repo = ctx.getPessoaRepository();
-            repo.create(customer);
-            ctx.commit();
-            System.out.println("Customer created successfully!");
-        } catch (Exception e) {
-            System.err.println("Error creating customer: " + e.getMessage());
-            e.printStackTrace();
-        }
+        // Initializing the repository
+        PessoaRepository repo = new PessoaRepository();
 
+        // send customer to repository to be created
+        repo.create(customer);
     }
   
-    private void listExistingBikes()
-    {
+    private void listExistingBikes() {
         System.out.println("listExistingBikes()");
-        // Creating a new JPA context and initializing the repository
-        try (JPAContext ctx = new JPAContext()) {
-            ctx.beginTransaction();
-            IBicicletaRepository repo = ctx.getBicicletaRepository();
-            // Getting all bikes from repo
-            List<Bicicleta> rows = repo.getAll().stream().toList();
 
-            // Creating table headers and rows to print
-            List<String> headers = List.of("Id", "Peso", "Raio", "Modelo", "Marca", "Mudanca", "Estado", "Atrdisc", "Dispositivo");
-            List<List<Object>> formattedRows = new ArrayList<>();
+        // Initializing the repository
+        BicicletaRepository repo = new BicicletaRepository();
 
-            for (Bicicleta bicicleta : rows) {
-                List<Object> row = new ArrayList<>();
-                row.add(bicicleta.getId());
-                row.add(bicicleta.getPeso());
-                row.add(bicicleta.getRaio());
-                row.add(bicicleta.getModelo());
-                row.add(bicicleta.getMarca());
-                row.add(bicicleta.getMudanca());
-                row.add(bicicleta.getEstado());
-                row.add(bicicleta.getAtrdisc());
-                row.add(bicicleta.getNoserie());
-                formattedRows.add(row);
-            }
+        // Getting all bikes from repo
+        List<Bicicleta> rows = repo.getAll().stream().toList();
 
-            // Displaying the obtained rows in a nice format
-            displayTable(headers, formattedRows);
-            ctx.commit();
+        // Creating table headers and rows to print
+        List<String> headers = List.of("Id", "Peso", "Raio", "Modelo", "Marca", "Mudanca", "Estado", "Atrdisc", "Dispositivo");
+        List<List<Object>> formattedRows = new ArrayList<>();
 
-        } catch (Exception e) {
-            System.err.println("Error listing bikes: " + e.getMessage());
-            e.printStackTrace();
+        for (Bicicleta bicicleta : rows) {
+            List<Object> row = new ArrayList<>();
+            row.add(bicicleta.getId());
+            row.add(bicicleta.getPeso());
+            row.add(bicicleta.getRaio());
+            row.add(bicicleta.getModelo());
+            row.add(bicicleta.getMarca());
+            row.add(bicicleta.getMudanca());
+            row.add(bicicleta.getEstado());
+            row.add(bicicleta.getAtrdisc());
+            row.add(bicicleta.getNoserie());
+            formattedRows.add(row);
         }
+        // Displaying the obtained rows in a nice format
+        displayTable(headers, formattedRows);
     }
 
 
@@ -310,14 +289,7 @@ class UI
 
 
 public class App{
-    @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception{
-        try {
-            UI.getInstance().Run();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            throw e;
-        }
-
+        UI.getInstance().Run();
     }
 }
