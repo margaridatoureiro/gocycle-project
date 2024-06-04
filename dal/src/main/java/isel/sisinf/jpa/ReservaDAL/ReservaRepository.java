@@ -2,12 +2,16 @@ package isel.sisinf.jpa.ReservaDAL;
 
 import isel.sisinf.jpa.JPAContext;
 import isel.sisinf.model.Reserva;
+import isel.sisinf.model.ReservaId;
 import jakarta.persistence.EntityManager;
 
+
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
 public class ReservaRepository implements IReservaRepository {
+
 
     @Override
     public Collection<Reserva> getAll() {
@@ -25,7 +29,18 @@ public class ReservaRepository implements IReservaRepository {
     }
 
     @Override
-    public Reserva findByKey(Integer key) {
+    public Reserva findByKey(ReservaId key)
+    {
+        try (JPAContext ctx = new JPAContext()) {
+            ctx.beginTransaction();
+            EntityManager entityManager = ctx.getEntityManager();
+            Reserva reserva = entityManager.find(Reserva.class, key);
+            ctx.commit();
+            return reserva;
+        } catch (Exception e) {
+            System.err.println("Error finding booking: " + e.getMessage());
+            e.printStackTrace();
+        }
         return null;
     }
 
@@ -60,6 +75,34 @@ public class ReservaRepository implements IReservaRepository {
 
     @Override
     public Reserva delete(Reserva entity) {
+        try (JPAContext ctx = new JPAContext()) {
+            ctx.beginTransaction();
+            EntityManager entityManager = ctx.getEntityManager();
+            Reserva managedEntity = entityManager.merge(entity);
+            entityManager.remove(managedEntity);
+            ctx.commit();
+            System.out.println("Booking deleted successfully!");
+            return entity;
+        } catch (Exception e) {
+            System.err.println("Error deleting booking: " + e.getMessage());
+            e.printStackTrace();
+        }
         return null;
+    }
+
+    public boolean isBikeAvailableOnDate(Integer id, LocalDate date) {
+        try (JPAContext ctx = new JPAContext()) {
+            ctx.beginTransaction();
+            EntityManager entityManager = ctx.getEntityManager();
+            boolean isAvailable = (boolean) entityManager.createNamedQuery("Reserva.isBikeAvailableOnDate")
+                    .setParameter("id", id)
+                    .setParameter("date", date)
+                    .getSingleResult();
+            ctx.commit();
+            return isAvailable;
+        } catch (Exception e) {
+            System.err.println("Error checking bike availability: " + e.getMessage());
+        }
+        return false;
     }
 }

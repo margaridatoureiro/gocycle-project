@@ -27,10 +27,7 @@ import isel.sisinf.jpa.BicicletaDAL.BicicletaRepository;
 import isel.sisinf.jpa.LojaDAL.LojaRepository;
 import isel.sisinf.jpa.PessoaDAL.PessoaRepository;
 import isel.sisinf.jpa.ReservaDAL.ReservaRepository;
-import isel.sisinf.model.Bicicleta;
-import isel.sisinf.model.Loja;
-import isel.sisinf.model.Pessoa;
-import isel.sisinf.model.Reserva;
+import isel.sisinf.model.*;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -280,9 +277,18 @@ class UI
 
     private void checkBikeAvailability()
     {
-        // TODO
-        System.out.println("checkBikeAvailability()");
+        System.out.println("checkBikeAvailability()\n");
+        listExistingBikes();
+        Integer bicicletaId = Integer.parseInt(inputData("Select Bicicleta ID:"));
+        LocalDate dtToCheck = LocalDate.parse(inputData("Input date to check (FORMAT: 'YYYY-MM-DD')"));
 
+
+        ReservaRepository repo = new ReservaRepository();
+        boolean isAvailable = repo.isBikeAvailableOnDate(bicicletaId, dtToCheck);
+        if (isAvailable)
+            System.out.println("Bike is available on " + dtToCheck);
+        else
+            System.out.println("Bike is not available on " + dtToCheck);
     }
 
     private void obtainBookings() {
@@ -346,10 +352,21 @@ class UI
 
     private void cancelBooking()
     {
-        // TODO
         System.out.println("cancelBooking");
-        
+        obtainBookings();
+        String reservaKey = inputData("Select the booking and store code ('booking,store') to cancel:");
+        ReservaRepository repo = new ReservaRepository();
+        try {
+            Integer id = Integer.parseInt(reservaKey.split(",")[0]);
+            Integer store = Integer.parseInt(reservaKey.split(",")[1]);
+            ReservaId noreservaId = new ReservaId(id, store);
+            Reserva booking = repo.findByKey(noreservaId);
+            repo.delete(booking);
+        } catch (Exception e) {
+            System.out.println("Error cancelling booking: " + e.getMessage());
+        }
     }
+
     private void about()
     {
         System.out.println("Group members:");

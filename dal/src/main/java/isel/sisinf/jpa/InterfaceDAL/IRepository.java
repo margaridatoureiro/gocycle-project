@@ -28,6 +28,7 @@ import java.util.Collection;
 public interface IRepository<T,TCol,TK> {
 	Collection<T> getAll(); // READ ALL
 	T findByKey(TK key); // READ ONE
+
 	TCol find(String jpql, Object... params);
 	T save(T entity); // CREATE
 	T delete(T entity); // DESTROY

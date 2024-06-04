@@ -6,9 +6,16 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
- @NamedQuery(name="Reserva.findByKey", query="SELECT r FROM Reserva r WHERE r.id = :key")
- @NamedQuery(name = "Reserva.getAll", query = "SELECT r FROM Reserva r")
+@NamedQuery(name="Reserva.findByKey", query="SELECT r FROM Reserva r WHERE r.id = :key")
+@NamedQuery(name = "Reserva.getAll", query = "SELECT r FROM Reserva r")
+@NamedQuery(
+        name = "Reserva.isBikeAvailableOnDate",
+        query = "SELECT CASE WHEN COUNT(r) > 0 THEN false ELSE true END FROM Reserva r WHERE r.bicicleta.id = :id AND (:date >= r.dtinicio AND (r.dtfim IS NULL OR :date <= r.dtfim))"
+)
+
  public class Reserva implements Serializable {
+
+
 
      @EmbeddedId
      private ReservaId id;
