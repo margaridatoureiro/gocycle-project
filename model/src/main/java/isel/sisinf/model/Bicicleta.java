@@ -1,13 +1,14 @@
 package isel.sisinf.model;
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 
  @Entity
  @NamedQuery(name="Bicicleta.findByKey", query="SELECT b FROM Bicicleta b WHERE b.id = :key")
  @NamedQuery(name = "Bicicleta.getAll", query = "SELECT b FROM Bicicleta b")
- public class Bicicleta {
+ public class Bicicleta implements Serializable {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
      private long id;

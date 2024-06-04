@@ -254,5 +254,6 @@ INSERT INTO ClienteReserva (cliente, reserva, loja) VALUES
 	;
 
 SELECT setval('pessoa_id_seq', (SELECT MAX(id) FROM Pessoa));
+SELECT setval('reserva_noreserva_seq', (SELECT MAX(noreserva) FROM Reserva));
 
 commit;

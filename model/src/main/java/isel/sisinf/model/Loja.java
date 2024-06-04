@@ -1,6 +1,8 @@
 package isel.sisinf.model;
 
 import jakarta.persistence.*;
+
+import java.io.Serializable;
 import java.util.Set;
 
 /*CREATE TABLE Loja(
@@ -14,8 +16,9 @@ import java.util.Set;
  */
 
 @Entity
-@Table(name = "Loja")
-public class Loja {
+@NamedQuery(name="Loja.findByKey", query="SELECT l FROM Loja l WHERE l.codigo = :key")
+@NamedQuery(name = "Loja.getAll", query = "SELECT l FROM Loja l")
+public class Loja implements Serializable {
     @Id
     private Integer codigo;
 
@@ -32,5 +35,36 @@ public class Loja {
     @JoinColumn(name = "gestor", nullable = false)
     private Pessoa gestor;
 
-    // getters and setters
+
+    public Integer getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(Integer codigo) {
+        this.codigo = codigo;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
+    }
+
+    public String getLocalidade() {
+        return localidade;
+    }
+
+    public void setLocalidade(String localidade) {
+        this.localidade = localidade;
+    }
 }
