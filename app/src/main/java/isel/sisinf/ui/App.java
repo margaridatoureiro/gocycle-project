@@ -24,10 +24,15 @@ SOFTWARE.
 package isel.sisinf.ui;
 
 import isel.sisinf.jpa.BicicletaDAL.BicicletaRepository;
+import isel.sisinf.jpa.LojaDAL.LojaRepository;
 import isel.sisinf.jpa.PessoaDAL.PessoaRepository;
+import isel.sisinf.jpa.ReservaDAL.ReservaRepository;
 import isel.sisinf.model.Bicicleta;
+import isel.sisinf.model.Loja;
 import isel.sisinf.model.Pessoa;
+import isel.sisinf.model.Reserva;
 
+import java.time.LocalDate;
 import java.util.*;
 
 
@@ -213,17 +218,17 @@ class UI
         // Creating a new Pessoa object
         Pessoa customer = new Pessoa(name, address, email, phone, idNumber, nationality, disciplinaryAttribute);
 
-        // Initializing the repository
+        // Initializing the Pessoa repository
         PessoaRepository repo = new PessoaRepository();
 
-        // send customer to repository to be created
+        // Sending customer to repository to be created
         repo.create(customer);
     }
   
     private void listExistingBikes() {
         System.out.println("listExistingBikes()");
 
-        // Initializing the repository
+        // Initializing the Bicicleta repository
         BicicletaRepository repo = new BicicletaRepository();
 
         // Getting all bikes from repo
@@ -250,6 +255,28 @@ class UI
         displayTable(headers, formattedRows);
     }
 
+    private void listExistingStores() {
+        System.out.println("listExistingStores()");
+
+        // Initializing the Loja repository
+        LojaRepository repo = new LojaRepository();
+        Collection<Loja> rows = repo.getAll().stream().toList();
+
+        List<String> headers = List.of("Código", "Email", "Endereço", "Localidade");
+        List<List<Object>> formattedRows = new ArrayList<>();
+
+        for (Loja loja : rows) {
+            List<Object> row = new ArrayList<>();
+            row.add(loja.getCodigo());
+            row.add(loja.getEmail());
+            row.add(loja.getEndereco());
+            row.add(loja.getLocalidade());
+            formattedRows.add(row);
+        }
+        // Displaying the obtained rows in a nice format
+        displayTable(headers, formattedRows);
+    }
+
 
     private void checkBikeAvailability()
     {
@@ -259,14 +286,61 @@ class UI
     }
 
     private void obtainBookings() {
-        // TODO
         System.out.println("obtainBookings()");
+
+        // Initializing the Reserva repository
+        ReservaRepository repo = new ReservaRepository();
+
+        // Getting all bikes from repo
+        List<Reserva> rows = repo.getAll().stream().toList();
+
+        // Creating table headers and rows to print
+        List<String> headers = List.of("Noreserva", "Loja", "Dtinicio", "Dtfim", "Valor", "Bicicleta");
+        List<List<Object>> formattedRows = new ArrayList<>();
+
+        for (Reserva reserva : rows) {
+            List<Object> row = new ArrayList<>();
+            row.add(reserva.getNoreserva());
+            row.add(reserva.getLoja().getCodigo());
+            row.add(reserva.getDtinicio());
+            row.add(reserva.getDtfim());
+            row.add(reserva.getValor());
+            row.add(reserva.getBicicleta().getId());
+            formattedRows.add(row);
+        }
+        // Displaying the obtained rows in a nice format
+        displayTable(headers, formattedRows);
     }
 
     private void makeBooking()
     {
-        // TODO
         System.out.println("makeBooking()");
+
+        // Display existing stores
+        listExistingStores();
+        Integer lojaCodigo = Integer.parseInt(inputData("Select Loja code"));
+        LojaRepository repoStores = new LojaRepository();
+        Loja loja = repoStores.findByKey(lojaCodigo);
+
+        // Display existing bikes
+        listExistingBikes();
+        Integer bicicletaId = Integer.parseInt(inputData("Select Bicicleta ID"));
+        BicicletaRepository repoBikes = new BicicletaRepository();
+        Bicicleta bicicleta = repoBikes.findByKey(bicicletaId);
+
+        // Collecting all necessary data
+        LocalDate dtinicio = LocalDate.parse(inputData("Input start date (FORMAT: 'YYYY-MM-DD')"));
+        LocalDate dtfim = LocalDate.parse(inputData("Input end date (FORMAT: 'YYYY-MM-DD')"));
+        Double valor = Double.parseDouble(inputData("Input valor"));
+
+        // Creating a new Reserva object
+        Reserva booking = new Reserva(loja, dtinicio, dtfim, valor, bicicleta);
+
+        // Initializing the Reserva repository
+        ReservaRepository repo = new ReservaRepository();
+
+        // Sending booking to repository to be created
+        repo.create(booking);
         
     }
 

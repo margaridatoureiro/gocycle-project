@@ -13,9 +13,9 @@ public class BicicletaRepository implements IBicicletaRepository {
             ctx.beginTransaction();
             ctx.helperCreateImpl(entity);
             ctx.commit();
-            System.out.println("Bicicleta created successfully!");
+            System.out.println("Bicycle created successfully!");
         } catch (Exception e) {
-            System.err.println("Error creating bicicleta: " + e.getMessage());
+            System.err.println("Error creating bicycle: " + e.getMessage());
             e.printStackTrace();
         }
         return entity;
@@ -30,7 +30,7 @@ public class BicicletaRepository implements IBicicletaRepository {
             ctx.commit();
             return bikes;
         } catch (Exception e) {
-            System.err.println("Error listing bikes: " + e.getMessage());
+            System.err.println("Error listing bicycles: " + e.getMessage());
             e.printStackTrace();
         }
         return null;
@@ -38,9 +38,20 @@ public class BicicletaRepository implements IBicicletaRepository {
 
     @Override
     public Bicicleta findByKey(Integer key) {
-       /* return _em.createNamedQuery("Bicicleta.findByKey", Bicicleta.class)
-                .setParameter("key", key)
-                .getSingleResult();*/
+        try (JPAContext ctx = new JPAContext()) {
+            ctx.beginTransaction();
+            EntityManager entityManager = ctx.getEntityManager();
+            Bicicleta bike = entityManager
+                    .createNamedQuery("Bicicleta.findByKey", Bicicleta.class)
+                    .setParameter("key", key)
+                    .getSingleResult();
+            ctx.commit();
+            System.out.println("Bicycle found!");
+            return bike;
+        } catch (Exception e) {
+            System.err.println("No bicycle with that key was found: " + e.getMessage());
+            e.printStackTrace();
+        }
         return null;
     }
 

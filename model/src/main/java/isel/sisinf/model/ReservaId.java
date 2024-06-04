@@ -6,16 +6,34 @@ import java.io.Serializable;
 import java.util.Set;
 
 /* */
- 
 
- @Embeddable
- class ReservaId implements Serializable {
-     @GeneratedValue(strategy = GenerationType.IDENTITY)
-     private Long noreserva;
- 
-     @ManyToOne
-     @JoinColumn(name = "loja")
-     private Loja loja;
- 
-     // getters and setters, equals and hashCode methods
- }
+
+@Embeddable
+public class ReservaId implements Serializable {
+
+    private Integer noreserva;
+    private Integer loja;
+
+    public ReservaId() {}
+
+    public ReservaId(Integer noreserva, Integer loja) {
+        this.noreserva = noreserva;
+        this.loja = loja;
+    }
+
+    public Integer getNoreserva() {
+        return noreserva;
+    }
+
+    public void setNoreserva(Integer noreserva) {
+        this.noreserva = noreserva;
+    }
+
+    public Integer getLoja() {
+        return loja;
+    }
+
+    public void setLoja(Integer loja) {
+        this.loja = loja;
+    }
+}

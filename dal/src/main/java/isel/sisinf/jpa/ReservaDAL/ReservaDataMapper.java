@@ -1,4 +1,7 @@
 package isel.sisinf.jpa.ReservaDAL;
 
-public class ReservaDataMapper {
+import isel.sisinf.jpa.InterfaceDAL.IDataMapper;
+import isel.sisinf.model.Reserva;
+
+public interface ReservaDataMapper extends IDataMapper<Reserva> {
 }
