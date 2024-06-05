@@ -1,3 +1,5 @@
+-- noinspection SqlDialectInspectionForFile
+-- noinspection SqlNoDataSourceInspectionForFile
 start transaction;
 
 INSERT INTO Pessoa (id, nome, morada, email, telefone, noident, nacionalidade, atrdisc) VALUES

@@ -30,6 +30,8 @@ import isel.sisinf.jpa.ReservaDAL.ReservaRepository;
 import isel.sisinf.model.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 
@@ -253,6 +255,7 @@ class UI
     }
 
     private void listExistingStores() {
+        // Display existing stores
         System.out.println("listExistingStores()");
 
         // Initializing the Loja repository
@@ -278,11 +281,13 @@ class UI
     private void checkBikeAvailability()
     {
         System.out.println("checkBikeAvailability()\n");
+        // Display existing bikes
         listExistingBikes();
+        // Collecting all necessary data
         Integer bicicletaId = Integer.parseInt(inputData("Select Bicicleta ID:"));
         LocalDate dtToCheck = LocalDate.parse(inputData("Input date to check (FORMAT: 'YYYY-MM-DD')"));
 
-
+        // Initializing the Reserva repository
         ReservaRepository repo = new ReservaRepository();
         boolean isAvailable = repo.isBikeAvailableOnDate(bicicletaId, dtToCheck);
         if (isAvailable)
@@ -324,23 +329,29 @@ class UI
 
         // Display existing stores
         listExistingStores();
-        Integer lojaCodigo = Integer.parseInt(inputData("Select Loja code"));
+        Integer lojaCodigo = Integer.parseInt(inputData("Select Store Code"));
         LojaRepository repoStores = new LojaRepository();
         Loja loja = repoStores.findByKey(lojaCodigo);
 
         // Display existing bikes
         listExistingBikes();
-        Integer bicicletaId = Integer.parseInt(inputData("Select Bicicleta ID"));
+        Integer bicicletaId = Integer.parseInt(inputData("Select Bicycle ID"));
         BicicletaRepository repoBikes = new BicicletaRepository();
         Bicicleta bicicleta = repoBikes.findByKey(bicicletaId);
 
         // Collecting all necessary data
-        LocalDate dtinicio = LocalDate.parse(inputData("Input start date (FORMAT: 'YYYY-MM-DD')"));
-        LocalDate dtfim = LocalDate.parse(inputData("Input end date (FORMAT: 'YYYY-MM-DD')"));
-        Double valor = Double.parseDouble(inputData("Input valor"));
+        LocalDate dataInicio = LocalDate.parse(inputData("Input start date (FORMAT: 'YYYY-MM-DD')"));
+        LocalTime horaInicio = LocalTime.parse(inputData("Input start time (FORMAT: 'HH:MM:SS')"));
+        LocalDateTime dataInicioFinal = LocalDateTime.of(dataInicio, horaInicio);
+
+        LocalDate dataFim = LocalDate.parse(inputData("Input end date (FORMAT: 'YYYY-MM-DD')"));
+        LocalTime horaFim = LocalTime.parse(inputData("Input end time (FORMAT: 'HH:MM:SS')"));
+        LocalDateTime dataFimFinal = LocalDateTime.of(dataFim, horaFim);
+
+        Double valor = Double.parseDouble(inputData("Input booking value"));
 
         // Creating a new Reserva object
-        Reserva booking = new Reserva(loja, dtinicio, dtfim, valor, bicicleta);
+        Reserva booking = new Reserva(loja, dataInicioFinal, dataFimFinal, valor, bicicleta);
 
         // Initializing the Reserva repository
         ReservaRepository repo = new ReservaRepository();
@@ -353,8 +364,11 @@ class UI
     private void cancelBooking()
     {
         System.out.println("cancelBooking");
+        // Display existing bookings
         obtainBookings();
+        // Collecting all necessary data
         String reservaKey = inputData("Select the booking and store code ('booking,store') to cancel:");
+        // Initializing the Reserva repository
         ReservaRepository repo = new ReservaRepository();
         try {
             Integer id = Integer.parseInt(reservaKey.split(",")[0]);
