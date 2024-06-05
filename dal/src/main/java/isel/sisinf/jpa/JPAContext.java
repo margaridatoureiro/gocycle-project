@@ -32,7 +32,6 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 import jakarta.persistence.Query;
-import jakarta.persistence.StoredProcedureQuery;
 
 public class JPAContext implements IContext{
 
@@ -115,7 +114,7 @@ public class JPAContext implements IContext{
 		--_txcount;
 		if(_txcount==0 && _tx != null)
 		{
-			_em.flush(); //To assure all changes in memory go into the database
+			_em.flush();
 			_tx.commit();
 			_tx = null;
 		}
@@ -153,7 +152,7 @@ public class JPAContext implements IContext{
 
 
 	@Override
-	public void close() throws Exception {
+	public void close() {
 
         if(_tx != null)
         	_tx.rollback();
@@ -167,18 +166,6 @@ public class JPAContext implements IContext{
 
 	public EntityManager getEntityManager() {
 		return _em;
-	}
-
-/// functions and stored procedure
-	//Example using a scalar function
-	public java.math.BigDecimal rand_fx(int seed) {
-	
-		StoredProcedureQuery namedrand_fx = 
-		          _em.createNamedStoredProcedureQuery("namedrand_fx");
-		namedrand_fx.setParameter(1, seed);
-		namedrand_fx.execute();
-		
-		return (java.math.BigDecimal)namedrand_fx.getOutputParameterValue(2);
 	}
 
 }

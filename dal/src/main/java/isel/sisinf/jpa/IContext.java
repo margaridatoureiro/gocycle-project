@@ -23,9 +23,6 @@ SOFTWARE.
 */
 package isel.sisinf.jpa;
 
-import isel.sisinf.jpa.BicicletaDAL.IBicicletaRepository;
-import isel.sisinf.jpa.PessoaDAL.IPessoaRepository;
-
 public interface IContext extends AutoCloseable {
 
 	 enum IsolationLevel {READ_UNCOMMITTED, READ_COMMITTED, REPEATABLE_READ, SERIALIZABLE };

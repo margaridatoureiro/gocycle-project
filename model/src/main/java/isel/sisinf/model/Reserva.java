@@ -3,19 +3,21 @@ package isel.sisinf.model;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @NamedQuery(name="Reserva.findByKey", query="SELECT r FROM Reserva r WHERE r.id = :key")
 @NamedQuery(name = "Reserva.getAll", query = "SELECT r FROM Reserva r")
 @NamedQuery(
         name = "Reserva.isBikeAvailableOnDate",
-        query = "SELECT CASE WHEN COUNT(r) > 0 THEN false ELSE true END FROM Reserva r WHERE r.bicicleta.id = :id AND (:date >= r.dtinicio AND (r.dtfim IS NULL OR :date <= r.dtfim))"
+        query = "SELECT CASE WHEN COUNT(r) > 0 " +
+                "THEN false ELSE true END " +
+                "FROM Reserva r WHERE r.bicicleta.id = :id " +
+                "AND (:date >= r.dtinicio AND (r.dtfim IS NULL " +
+                "OR :date <= r.dtfim))"
 )
 
  public class Reserva implements Serializable {
-
-
 
      @EmbeddedId
      private ReservaId id;
@@ -30,10 +32,10 @@ import java.time.LocalDate;
      private Loja loja;
 
      @Column(name = "dtinicio", nullable = false)
-     private LocalDate dtinicio = LocalDate.now();
+     private LocalDateTime dtinicio = LocalDateTime.now();
 
      @Column(name = "dtfim")
-     private LocalDate dtfim;
+     private LocalDateTime dtfim;
 
      @Column(name = "valor", nullable = false)
      private Double valor;
@@ -47,7 +49,7 @@ import java.time.LocalDate;
      }
 
      // Parameterized constructor
-     public Reserva(Loja loja, LocalDate dtinicio, LocalDate dtfim, Double valor, Bicicleta bicicleta) {
+     public Reserva(Loja loja, LocalDateTime dtinicio, LocalDateTime dtfim, Double valor, Bicicleta bicicleta) {
          this.loja = loja;
          this.dtfim = dtfim;
          this.dtinicio = dtinicio;
@@ -80,19 +82,19 @@ import java.time.LocalDate;
          this.loja = loja;
      }
 
-     public LocalDate getDtinicio() {
+     public LocalDateTime getDtinicio() {
          return dtinicio;
      }
 
-     public void setDtinicio(LocalDate dtinicio) {
+     public void setDtinicio(LocalDateTime dtinicio) {
          this.dtinicio = dtinicio;
      }
 
-     public LocalDate getDtfim() {
+     public LocalDateTime getDtfim() {
          return dtfim;
      }
 
-     public void setDtfim(LocalDate dtfim) {
+     public void setDtfim(LocalDateTime dtfim) {
          this.dtfim = dtfim;
      }
 
