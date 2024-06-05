@@ -4,6 +4,7 @@ import isel.sisinf.jpa.JPAContext;
 import isel.sisinf.model.Reserva;
 import isel.sisinf.model.ReservaId;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.OptimisticLockException;
 
 
 import java.time.LocalDate;
@@ -11,7 +12,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class ReservaRepository implements IReservaRepository {
-
 
     @Override
     public Collection<Reserva> getAll() {
@@ -75,6 +75,10 @@ public class ReservaRepository implements IReservaRepository {
 
     @Override
     public Reserva delete(Reserva entity) {
+        if (entity == null) {
+            System.err.println("Error deleting booking: entity is null");
+            return null;
+        }
         try (JPAContext ctx = new JPAContext()) {
             ctx.beginTransaction();
             EntityManager entityManager = ctx.getEntityManager();
@@ -83,9 +87,10 @@ public class ReservaRepository implements IReservaRepository {
             ctx.commit();
             System.out.println("Booking deleted successfully!");
             return entity;
+        } catch (OptimisticLockException e) {
+            System.err.println("Error deleting booking: " + e.getMessage());
         } catch (Exception e) {
             System.err.println("Error deleting booking: " + e.getMessage());
-            e.printStackTrace();
         }
         return null;
     }
@@ -104,5 +109,33 @@ public class ReservaRepository implements IReservaRepository {
             System.err.println("Error checking bike availability: " + e.getMessage());
         }
         return false;
+    }
+
+    public void forceOptimisticLockingError() {
+        try (JPAContext ctx1 = new JPAContext()) {
+            ctx1.beginTransaction();
+            EntityManager entityManager1 = ctx1.getEntityManager();
+            Reserva reserva1 = entityManager1.find(Reserva.class, new ReservaId(1, 123)); // Use your actual ReservaId
+            reserva1.setValor(13.37); // Modify the entity
+
+            // Start second transaction
+            try (JPAContext ctx2 = new JPAContext()) {
+                ctx2.beginTransaction();
+                EntityManager entityManager2 = ctx2.getEntityManager();
+                Reserva reserva2 = entityManager2.find(Reserva.class, new ReservaId(1, 123)); // Use your actual ReservaId
+                reserva2.setValor(6.66); // Modify the entity
+                entityManager2.merge(reserva2);
+                ctx2.commit(); // Commit second transaction
+            } catch (Exception e) {
+                System.err.println("Error in second transaction: " + e.getMessage());
+            }
+
+            entityManager1.merge(reserva1);
+            ctx1.commit(); // Attempt to commit first transaction
+        } catch (OptimisticLockException e) {
+            System.err.println("OptimisticLockException: " + e.getMessage()); // This should be thrown
+        } catch (Exception e) {
+            System.err.println("Error in first transaction: " + e.getMessage());
+        }
     }
 }

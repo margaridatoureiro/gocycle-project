@@ -379,6 +379,11 @@ class UI
         } catch (Exception e) {
             System.out.println("Error cancelling booking: " + e.getMessage());
         }
+
+
+        boolean simError = false;
+        if(simError)
+            repo.forceOptimisticLockingError();
     }
 
     private void about()

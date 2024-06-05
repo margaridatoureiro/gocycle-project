@@ -19,6 +19,9 @@ import java.time.LocalDateTime;
 
  public class Reserva implements Serializable {
 
+     @Version
+     private int version;
+
      @EmbeddedId
      private ReservaId id;
 
