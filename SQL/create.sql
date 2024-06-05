@@ -91,6 +91,7 @@ CREATE TABLE Reserva(
 	dtfim timestamp,
 	valor numeric(4,2) NOT NULL,
 	bicicleta integer NOT NULL REFERENCES Bicicleta(id),
+	version integer not null default 0,
 	PRIMARY KEY (noreserva, loja),
 	constraint CHK_Reserva_dtfim CHECK (dtfim > dtinicio)
 );
