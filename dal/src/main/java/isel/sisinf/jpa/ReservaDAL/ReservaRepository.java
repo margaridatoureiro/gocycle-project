@@ -130,18 +130,20 @@ public class ReservaRepository implements IReservaRepository {
     }
 
     public void forceOptimisticLockingError() {
+        ReservaId reservaId = new ReservaId(1, 123);
+
         try (JPAContext ctx1 = new JPAContext()) {
             ctx1.beginTransaction();
             EntityManager entityManager1 = ctx1.getEntityManager();
-            Reserva reserva1 = entityManager1.find(Reserva.class, new ReservaId(1, 123)); // Use your actual ReservaId
-            reserva1.setValor(13.37); // Modify the entity
+            Reserva reserva1 = entityManager1.find(Reserva.class, reservaId);
+            reserva1.setValor(20.0); // Modify the entity
 
             // Start second transaction
             try (JPAContext ctx2 = new JPAContext()) {
                 ctx2.beginTransaction();
                 EntityManager entityManager2 = ctx2.getEntityManager();
-                Reserva reserva2 = entityManager2.find(Reserva.class, new ReservaId(1, 123)); // Use your actual ReservaId
-                reserva2.setValor(6.66); // Modify the entity
+                Reserva reserva2 = entityManager2.find(Reserva.class, reservaId);
+                reserva2.setValor(10.0); // Modify the entity
                 entityManager2.merge(reserva2);
                 ctx2.commit(); // Commit second transaction
             } catch (Exception e) {
@@ -151,9 +153,74 @@ public class ReservaRepository implements IReservaRepository {
             entityManager1.merge(reserva1);
             ctx1.commit(); // Attempt to commit first transaction
         } catch (OptimisticLockException e) {
-            System.err.println("OptimisticLockException: " + e.getMessage()); // This should be thrown
+            System.err.println("OptimisticLockException: " + e.getMessage());
         } catch (Exception e) {
             System.err.println("Error in first transaction: " + e.getMessage());
         }
     }
+
+    public void provokeOptimisticLockingErrorWhileDeletingReservation() {
+        ReservaId reservaId = new ReservaId(1, 123); // Use your actual ReservaId
+
+        EntityManager entityManager1 = null;
+        EntityManager entityManager2 = null;
+
+        try {
+            // First transaction: Retrieve the reservation
+            try (JPAContext ctx1 = new JPAContext()) {
+                ctx1.beginTransaction();
+                entityManager1 = ctx1.getEntityManager();
+                Reserva reserva1 = entityManager1.find(Reserva.class, reservaId);
+                ctx1.commit();
+            }
+
+            // Second transaction: Modify the reservation
+            try (JPAContext ctx2 = new JPAContext()) {
+                ctx2.beginTransaction();
+                entityManager2 = ctx2.getEntityManager();
+                Reserva reserva2 = entityManager2.find(Reserva.class, reservaId);
+                reserva2.setValor(13.37); // Modify the entity
+                entityManager2.merge(reserva2);
+                ctx2.commit();
+            }
+
+            // Third transaction: Delete the reservation along with associated ClienteReserva
+            try (JPAContext ctx3 = new JPAContext()) {
+                ctx3.beginTransaction();
+                entityManager1 = ctx3.getEntityManager();
+                Reserva reserva3 = entityManager1.find(Reserva.class, reservaId);
+
+                // Modify the reservation again in the second transaction before committing the deletion
+                try (JPAContext ctx2 = new JPAContext()) {
+                    ctx2.beginTransaction();
+                    entityManager2 = ctx2.getEntityManager();
+                    Reserva reserva2 = entityManager2.find(Reserva.class, reservaId);
+                    reserva2.setValor(6.66); // Modify the entity again to provoke optimistic locking error
+                    entityManager2.merge(reserva2);
+                    ctx2.commit();
+                } catch (Exception e) {
+                    System.err.println("Error in modifying reservation in the second transaction: " + e.getMessage());
+                }
+
+                ReservaRepository reservaRepository = new ReservaRepository();
+                Reserva deletedReserva = reservaRepository.delete(reserva3);
+                ctx3.commit();
+            }
+        } catch (OptimisticLockException e) {
+            System.err.println("OptimisticLockException: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+        } finally {
+            if (entityManager1 != null && entityManager1.isOpen()) {
+                entityManager1.close();
+            }
+            if (entityManager2 != null && entityManager2.isOpen()) {
+                entityManager2.close();
+            }
+        }
+    }
+
+
+
+
 }

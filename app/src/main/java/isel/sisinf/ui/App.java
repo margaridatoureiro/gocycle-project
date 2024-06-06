@@ -392,7 +392,13 @@ class UI
         System.out.println(" - Manuel Fonseca");
         System.out.println(" - Margarida Toureiro");
         System.out.println(" - Ricardo Almeida");
-        
+
+
+        ReservaRepository repo = new ReservaRepository();
+        boolean simError = true;
+        if(simError)
+            //repo.forceOptimisticLockingError();
+            repo.provokeOptimisticLockingErrorWhileDeletingReservation();
     }
 }
 
