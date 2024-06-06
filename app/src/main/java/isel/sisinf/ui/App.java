@@ -285,7 +285,10 @@ class UI
         listExistingBikes();
         // Collecting all necessary data
         Integer bicicletaId = Integer.parseInt(inputData("Select Bicicleta ID:"));
-        LocalDate dtToCheck = LocalDate.parse(inputData("Input date to check (FORMAT: 'YYYY-MM-DD')"));
+        // Collecting all necessary data
+        LocalDate dataInicio = LocalDate.parse(inputData("Input start date (FORMAT: 'YYYY-MM-DD')"));
+        LocalTime horaInicio = LocalTime.parse(inputData("Input start time (FORMAT: 'HH:MM:SS')"));
+        LocalDateTime dtToCheck = LocalDateTime.of(dataInicio, horaInicio);
 
         // Initializing the Reserva repository
         ReservaRepository repo = new ReservaRepository();

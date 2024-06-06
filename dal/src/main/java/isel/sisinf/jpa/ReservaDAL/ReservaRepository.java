@@ -10,6 +10,7 @@ import jakarta.persistence.Query;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -113,7 +114,7 @@ public class ReservaRepository implements IReservaRepository {
     }
 
 
-    public boolean isBikeAvailableOnDate(Integer id, LocalDate date) {
+    public boolean isBikeAvailableOnDate(Integer id, LocalDateTime date) {
         try (JPAContext ctx = new JPAContext()) {
             ctx.beginTransaction();
             EntityManager entityManager = ctx.getEntityManager();

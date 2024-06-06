@@ -110,7 +110,7 @@ CREATE TABLE ClienteReserva(
 end; $$ ;
 commit;
 
-CREATE OR REPLACE FUNCTION is_bike_available_on_date(bike_id INTEGER, check_date DATE)
+CREATE OR REPLACE FUNCTION is_bike_available_on_date(bike_id INTEGER, check_date TIMESTAMP)
 RETURNS BOOLEAN AS $$
 DECLARE
     count_reservations INTEGER;
