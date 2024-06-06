@@ -22,9 +22,13 @@ public class ClienteReserva implements Serializable {
     private Pessoa cliente;
 
 
-    @Version
-    @Column(name = "version", nullable = false)
-    private int version;
+    public ClienteReserva(ClienteReservaId id) {
+        this.id = id;
+    }
+
+    // Default constructor
+    public ClienteReserva() {
+    }
 
     // Getters and setters
     public ClienteReservaId getId() {

@@ -102,7 +102,6 @@ CREATE TABLE ClienteReserva(
 	cliente integer REFERENCES Pessoa(id),
 	reserva integer,
 	loja integer,
-	version integer not null default 0,
 	PRIMARY KEY (cliente, reserva, loja),
 	FOREIGN KEY (reserva, loja) REFERENCES Reserva(noreserva, loja)
 );
@@ -126,3 +125,23 @@ BEGIN
         RETURN TRUE;
     END IF;
 END; $$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION check_bike_availability()
+    RETURNS TRIGGER AS $$
+BEGIN
+    -- Call the is_bike_available_on_date function with the necessary parameters
+    -- For example, if the Reserva table has columns 'bike_id' and 'date'
+    IF NOT is_bike_available_on_date(NEW.bicicleta, NEW.dtinicio) THEN
+        RAISE EXCEPTION 'The bike is not available on the specified date';
+    END IF;
+
+    -- If the bike is available, return NEW to allow the insert operation to proceed
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_bike_availability_trigger
+BEFORE INSERT ON Reserva
+FOR EACH ROW
+EXECUTE PROCEDURE check_bike_availability();

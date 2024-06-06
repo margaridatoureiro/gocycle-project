@@ -107,15 +107,15 @@ INSERT INTO Reserva (loja, dtinicio, dtfim, valor, bicicleta) VALUES
 	),
 	(
 		(SELECT codigo FROM Loja WHERE endereco = 'Diagon Alley'),
-		'2024-11-22 10:05:34',
-		'2024-11-28 10:05:34',
+		'2029-11-22 10:05:34',
+		'2029-11-28 10:05:34',
 		30.75,
 		(SELECT id FROM Bicicleta WHERE modelo = 'Supreme FX')
 	),
 	(
 		(SELECT codigo FROM Loja WHERE endereco = 'The Mediterranean Shire Avenue'),
-		'2024-11-21 10:05:34',
-		'2024-12-10 10:05:34',
+		'2024-08-01 10:05:34',
+		'2024-08-10 10:05:34',
 		26.55,
 		(SELECT id FROM Bicicleta WHERE modelo = 'Dutch Treasure')
 	),
@@ -135,22 +135,22 @@ INSERT INTO Reserva (loja, dtinicio, dtfim, valor, bicicleta) VALUES
 	),
 	(
 		(SELECT codigo FROM Loja WHERE endereco = 'The Mediterranean Shire Avenue'),
-		'2023-11-16 12:05:34',
-		'2023-11-18 10:05:34',
+		'2027-11-16 12:05:34',
+		'2027-11-18 10:05:34',
 		20.65,
 		(SELECT id FROM Bicicleta WHERE modelo = 'Speedy Kids')
 	),
 	(
 		(SELECT codigo FROM Loja WHERE endereco = 'The Mediterranean Shire Avenue'),
-		'2024-11-20 19:05:34',
-		'2024-11-30 10:05:34',
+		'2024-12-20 19:05:34',
+		'2024-12-30 10:05:34',
 		20.65,
 		(SELECT id FROM Bicicleta WHERE modelo = 'Radical Trip')
 	),
 	(
 		(SELECT codigo FROM Loja WHERE endereco = 'The Mediterranean Shire Avenue'),
-		'2025-11-22 11:05:34',
-		'2025-11-30 10:05:34',
+		'2028-11-22 11:05:34',
+		'2028-11-30 10:05:34',
 		20.65,
 		(SELECT id FROM Bicicleta WHERE modelo = 'Mountain 3000')
 	),
@@ -163,8 +163,8 @@ INSERT INTO Reserva (loja, dtinicio, dtfim, valor, bicicleta) VALUES
 	),
 	(
 		(SELECT codigo FROM Loja WHERE endereco = 'The Mediterranean Shire Avenue'),
-		'2024-11-22 11:05:34',
-		'2024-11-30 10:05:34',
+		'2024-10-22 11:05:34',
+		'2024-10-30 10:05:34',
 		30.75,
 		(SELECT id FROM Bicicleta WHERE modelo = 'Supreme FX')
 	),
@@ -184,69 +184,4 @@ INSERT INTO Reserva (loja, dtinicio, dtfim, valor, bicicleta) VALUES
 	)
 	;
 	
-
-
-INSERT INTO ClienteReserva (cliente, reserva, loja) VALUES
-	(
-		(SELECT id FROM Pessoa WHERE noident = '15223370'),
-		1,
-		123
-	),
-	(
-		(SELECT id FROM Pessoa WHERE noident = '15223374'),
-		2,
-		123
-	),
-	(
-		(SELECT id FROM Pessoa WHERE noident = '15223373'),
-		3,
-		456
-	),
-	(
-		(SELECT id FROM Pessoa WHERE noident = '15223376'),
-		4,
-		456
-	),
-	(
-		(SELECT id FROM Pessoa WHERE noident = '15223375'),
-		5,
-		456
-	),
-	(
-		(SELECT id FROM Pessoa WHERE noident = '15223372'),
-		6,
-		456
-	),
-	(
-		(SELECT id FROM Pessoa WHERE noident = '15223370'),
-		7,
-		456
-	),
-	(
-		(SELECT id FROM Pessoa WHERE noident = '15223374'),
-		8,
-		456
-	),
-	(
-		(SELECT id FROM Pessoa WHERE noident = '15223370'),
-		9,
-		456
-	),
-	(
-		(SELECT id FROM Pessoa WHERE noident = '15223376'),
-		10,
-		456
-	),
-	(
-		(SELECT id FROM Pessoa WHERE noident = '15223370'),
-		11,
-		456
-	),
-	(
-		(SELECT id FROM Pessoa WHERE noident = '15223370'),
-		12,
-		456
-	)
-	;
-
 commit;

@@ -60,7 +60,6 @@ import java.time.LocalDateTime;
          this.bicicleta = bicicleta;
      }
 
-
      public ReservaId getId() {
          return id;
      }
