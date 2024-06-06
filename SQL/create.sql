@@ -5,6 +5,9 @@ start transaction;
 do $$
 begin
 
+DROP TRIGGER IF EXISTS check_bike_availability_trigger ON Reserva;
+DROP FUNCTION IF EXISTS check_bike_availability();
+DROP FUNCTION IF EXISTS is_bike_available_on_date();
 DROP TABLE IF EXISTS ClienteReserva;
 DROP TABLE IF EXISTS Reserva CASCADE;
 DROP TABLE IF EXISTS Eletrica;
