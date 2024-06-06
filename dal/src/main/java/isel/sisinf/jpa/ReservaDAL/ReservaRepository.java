@@ -5,6 +5,7 @@ import isel.sisinf.model.Reserva;
 import isel.sisinf.model.ReservaId;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.OptimisticLockException;
+import jakarta.persistence.Query;
 
 
 import java.time.LocalDate;
@@ -99,10 +100,10 @@ public class ReservaRepository implements IReservaRepository {
         try (JPAContext ctx = new JPAContext()) {
             ctx.beginTransaction();
             EntityManager entityManager = ctx.getEntityManager();
-            boolean isAvailable = (boolean) entityManager.createNamedQuery("Reserva.isBikeAvailableOnDate")
-                    .setParameter("id", id)
-                    .setParameter("date", date)
-                    .getSingleResult();
+            Query query = entityManager.createNativeQuery("SELECT is_bike_available_on_date(?, ?)");
+            query.setParameter(1, id);
+            query.setParameter(2, date);
+            boolean isAvailable = (boolean) query.getSingleResult();
             ctx.commit();
             return isAvailable;
         } catch (Exception e) {

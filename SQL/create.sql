@@ -107,3 +107,20 @@ CREATE TABLE ClienteReserva(
 
 end; $$ ;
 commit;
+
+CREATE OR REPLACE FUNCTION is_bike_available_on_date(bike_id INTEGER, check_date DATE)
+RETURNS BOOLEAN AS $$
+DECLARE
+    count_reservations INTEGER;
+BEGIN
+    SELECT COUNT(*)
+    INTO count_reservations
+    FROM reserva
+    WHERE bicicleta = bike_id AND (check_date >= dtinicio AND (dtfim IS NULL OR check_date <= dtfim));
+
+    IF count_reservations > 0 THEN
+        RETURN FALSE;
+    ELSE
+        RETURN TRUE;
+    END IF;
+END; $$ LANGUAGE plpgsql;
