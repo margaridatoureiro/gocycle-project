@@ -118,7 +118,7 @@ public class ReservaRepository implements IReservaRepository {
         try (JPAContext ctx = new JPAContext()) {
             ctx.beginTransaction();
             EntityManager entityManager = ctx.getEntityManager();
-            Query query = entityManager.createNativeQuery("SELECT is_bike_available_on_date(?, ?)");
+            Query query = entityManager.createNativeQuery("SELECT is_bike_available_on_date(?::integer, ?::timestamp)");
             query.setParameter(1, id);
             query.setParameter(2, date);
             boolean isAvailable = (boolean) query.getSingleResult();
