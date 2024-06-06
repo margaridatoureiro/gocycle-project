@@ -1,6 +1,7 @@
 package isel.sisinf.jpa.ReservaDAL;
 
 import isel.sisinf.jpa.JPAContext;
+import isel.sisinf.model.ClienteReserva;
 import isel.sisinf.model.Reserva;
 import isel.sisinf.model.ReservaId;
 import jakarta.persistence.EntityManager;
@@ -83,10 +84,25 @@ public class ReservaRepository implements IReservaRepository {
         try (JPAContext ctx = new JPAContext()) {
             ctx.beginTransaction();
             EntityManager entityManager = ctx.getEntityManager();
+
+            // Fetching ClienteReserva entries associated with the Reserva
+            List<ClienteReserva> clienteReservas = entityManager.createQuery(
+                            "SELECT cr FROM ClienteReserva cr WHERE cr.id.reserva = :reserva AND cr.id.loja = :loja", ClienteReserva.class)
+                    .setParameter("reserva", entity.getNoreserva())
+                    .setParameter("loja", entity.getLoja().getCodigo())
+                    .getResultList();
+
+            // Deleting ClienteReserva entries
+            for (ClienteReserva cr : clienteReservas) {
+                entityManager.remove(cr);
+            }
+
+            // Deleting the Reserva
             Reserva managedEntity = entityManager.merge(entity);
             entityManager.remove(managedEntity);
+
             ctx.commit();
-            System.out.println("Booking deleted successfully!");
+            System.out.println("Booking and related client reservations deleted successfully!");
             return entity;
         } catch (OptimisticLockException e) {
             System.err.println("Error deleting booking: " + e.getMessage());
@@ -95,6 +111,7 @@ public class ReservaRepository implements IReservaRepository {
         }
         return null;
     }
+
 
     public boolean isBikeAvailableOnDate(Integer id, LocalDate date) {
         try (JPAContext ctx = new JPAContext()) {

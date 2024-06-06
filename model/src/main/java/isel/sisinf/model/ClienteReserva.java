@@ -1,33 +1,53 @@
 package isel.sisinf.model;
 
 import jakarta.persistence.*;
-import java.util.Set;
+import java.io.Serializable;
 
-/*CREATE TABLE ClienteReserva(
-	cliente integer REFERENCES Pessoa(id),
-	reserva integer,
-	loja integer,
-	PRIMARY KEY (cliente, reserva, loja),
-	FOREIGN KEY (reserva, loja) REFERENCES Reserva(noreserva, loja)
-);
- */
+@Entity
+@Table(name = "ClienteReserva")
+public class ClienteReserva implements Serializable {
 
- @Entity
- @Table(name = "ClienteReserva")
- public class ClienteReserva {
-     @EmbeddedId
-     private ClienteReservaId id;
- 
-     @ManyToOne
-     @JoinColumns({
-         @JoinColumn(name = "reserva", referencedColumnName = "noreserva", insertable = false, updatable = false),
-         @JoinColumn(name = "loja", referencedColumnName = "loja", insertable = false, updatable = false)
-     })
-     private Reserva reserva;
- 
-     @ManyToOne
-     @JoinColumn(name = "cliente", insertable = false, updatable = false)
-     private Pessoa cliente;
- 
-     // getters and setters
- }
+    @EmbeddedId
+    private ClienteReservaId id;
+
+    @ManyToOne
+    @JoinColumns({
+            @JoinColumn(name = "reserva", referencedColumnName = "noreserva", insertable = false, updatable = false),
+            @JoinColumn(name = "loja", referencedColumnName = "loja", insertable = false, updatable = false)
+    })
+    private Reserva reserva;
+
+    @ManyToOne
+    @JoinColumn(name = "cliente", insertable = false, updatable = false)
+    private Pessoa cliente;
+
+
+    @Version
+    @Column(name = "version", nullable = false)
+    private int version;
+
+    // Getters and setters
+    public ClienteReservaId getId() {
+        return id;
+    }
+
+    public void setId(ClienteReservaId id) {
+        this.id = id;
+    }
+
+    public Reserva getReserva() {
+        return reserva;
+    }
+
+    public void setReserva(Reserva reserva) {
+        this.reserva = reserva;
+    }
+
+    public Pessoa getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Pessoa cliente) {
+        this.cliente = cliente;
+    }
+}

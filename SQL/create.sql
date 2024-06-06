@@ -101,6 +101,7 @@ CREATE TABLE ClienteReserva(
 	cliente integer REFERENCES Pessoa(id),
 	reserva integer,
 	loja integer,
+	version integer not null default 0,
 	PRIMARY KEY (cliente, reserva, loja),
 	FOREIGN KEY (reserva, loja) REFERENCES Reserva(noreserva, loja)
 );
