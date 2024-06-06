@@ -100,36 +100,36 @@ INSERT INTO Eletrica (bicicleta, autonomia, velocidade) VALUES
 INSERT INTO Reserva (loja, dtinicio, dtfim, valor, bicicleta) VALUES
 	(
 		(SELECT codigo FROM Loja WHERE endereco = 'Diagon Alley'),
-		'2022-11-21 10:05:34',
-		'2022-11-28 10:05:34',
+		'2024-11-21 10:05:34',
+		'2024-11-28 10:05:34',
 		22.75,
 		(SELECT id FROM Bicicleta WHERE modelo = 'Mountain 3000')
 	),
 	(
 		(SELECT codigo FROM Loja WHERE endereco = 'Diagon Alley'),
-		'2022-11-22 10:05:34',
-		'2022-11-28 10:05:34',
+		'2024-11-22 10:05:34',
+		'2024-11-28 10:05:34',
 		30.75,
 		(SELECT id FROM Bicicleta WHERE modelo = 'Supreme FX')
 	),
 	(
 		(SELECT codigo FROM Loja WHERE endereco = 'The Mediterranean Shire Avenue'),
-		'2023-11-21 10:05:34',
-		'2023-12-10 10:05:34',
+		'2024-11-21 10:05:34',
+		'2024-12-10 10:05:34',
 		26.55,
 		(SELECT id FROM Bicicleta WHERE modelo = 'Dutch Treasure')
 	),
 	(
 		(SELECT codigo FROM Loja WHERE endereco = 'The Mediterranean Shire Avenue'),
-		'2023-11-22 10:05:34',
-		'2023-11-30 10:05:34',
+		'2026-11-22 10:05:34',
+		'2026-11-30 10:05:34',
 		20.65,
 		(SELECT id FROM Bicicleta WHERE modelo = 'Mountain Roll 4000')
 	),
 	(
 		(SELECT codigo FROM Loja WHERE endereco = 'The Mediterranean Shire Avenue'),
-		'2024-11-22 10:05:34',
-		'2024-11-29 16:05:34',
+		'2025-11-22 10:05:34',
+		'2025-11-29 16:05:34',
 		20.65,
 		(SELECT id FROM Bicicleta WHERE modelo = 'Radical Trip')
 	),
@@ -142,8 +142,8 @@ INSERT INTO Reserva (loja, dtinicio, dtfim, valor, bicicleta) VALUES
 	),
 	(
 		(SELECT codigo FROM Loja WHERE endereco = 'The Mediterranean Shire Avenue'),
-		'2023-11-20 19:05:34',
-		'2023-11-30 10:05:34',
+		'2024-11-20 19:05:34',
+		'2024-11-30 10:05:34',
 		20.65,
 		(SELECT id FROM Bicicleta WHERE modelo = 'Radical Trip')
 	),
@@ -156,29 +156,29 @@ INSERT INTO Reserva (loja, dtinicio, dtfim, valor, bicicleta) VALUES
 	),
 	(
 		(SELECT codigo FROM Loja WHERE endereco = 'The Mediterranean Shire Avenue'),
-		'2023-11-22 11:05:34',
-		'2023-11-30 10:05:34',
+		'2024-11-22 11:05:34',
+		'2024-11-30 10:05:34',
 		30.75,
 		(SELECT id FROM Bicicleta WHERE modelo = 'Supreme FX')
 	),
 	(
 		(SELECT codigo FROM Loja WHERE endereco = 'The Mediterranean Shire Avenue'),
-		'2023-11-22 11:05:34',
-		'2023-11-30 10:05:34',
+		'2024-11-22 11:05:34',
+		'2024-11-30 10:05:34',
 		30.75,
 		(SELECT id FROM Bicicleta WHERE modelo = 'Supreme FX')
 	),
 	(
 		(SELECT codigo FROM Loja WHERE endereco = 'The Mediterranean Shire Avenue'),
-		'2023-11-10 11:05:34',
-		'2023-11-30 10:05:34',
+		'2026-11-10 11:05:34',
+		'2026-11-30 10:05:34',
 		30.75,
 		(SELECT id FROM Bicicleta WHERE modelo = 'Dutch Treasure')
 	),
 	(
 		(SELECT codigo FROM Loja WHERE endereco = 'The Mediterranean Shire Avenue'),
-		'2023-11-20 11:05:34',
-		'2023-11-30 10:05:34',
+		'2024-11-20 11:05:34',
+		'2024-11-30 10:05:34',
 		30.75,
 		(SELECT id FROM Bicicleta WHERE modelo = 'Mountain 3000')
 	)
