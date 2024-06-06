@@ -2,6 +2,7 @@ package isel.sisinf.jpa.PessoaDAL;
 
 import isel.sisinf.jpa.JPAContext;
 import isel.sisinf.model.Pessoa;
+import jakarta.persistence.EntityManager;
 
 import java.util.Collection;
 import java.util.List;
@@ -28,7 +29,17 @@ public class PessoaRepository implements IPessoaRepository {
 
     @Override
     public Collection<Pessoa> getAll() {
-        return List.of();
+        try (JPAContext ctx = new JPAContext()) {
+            ctx.beginTransaction();
+            EntityManager entityManager = ctx.getEntityManager();
+            Collection<Pessoa> clients = entityManager.createNamedQuery("Pessoa.getAll", Pessoa.class).getResultList();
+            ctx.commit();
+            return clients;
+        } catch (Exception e) {
+            System.err.println("Error listing clients: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

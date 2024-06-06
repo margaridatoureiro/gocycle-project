@@ -24,6 +24,7 @@ SOFTWARE.
 package isel.sisinf.ui;
 
 import isel.sisinf.jpa.BicicletaDAL.BicicletaRepository;
+import isel.sisinf.jpa.ClienteReservaDAL.ClienteReservaRepository;
 import isel.sisinf.jpa.LojaDAL.LojaRepository;
 import isel.sisinf.jpa.PessoaDAL.PessoaRepository;
 import isel.sisinf.jpa.ReservaDAL.ReservaRepository;
@@ -277,6 +278,33 @@ class UI
         displayTable(headers, formattedRows);
     }
 
+    private void listExistingClients() {
+        // Display existing stores
+        System.out.println("listExistingClients()");
+
+        // Initializing the Pessoa repository
+        PessoaRepository repo = new PessoaRepository();
+        Collection<Pessoa> rows = repo.getAll().stream().toList();
+
+        List<String> headers = List.of("Id", "Nome", "Morada", "Email", "Telefone", "Noident", "Nacionalidade", "atrcdisc");
+        List<List<Object>> formattedRows = new ArrayList<>();
+
+        for (Pessoa pessoa : rows) {
+            List<Object> row = new ArrayList<>();
+            row.add(pessoa.getId());
+            row.add(pessoa.getNome());
+            row.add(pessoa.getMorada());
+            row.add(pessoa.getEmail());
+            row.add(pessoa.getTelefone());
+            row.add(pessoa.getNoident());
+            row.add(pessoa.getNacionalidade());
+            row.add(pessoa.getAtrdisc());
+            formattedRows.add(row);
+        }
+        // Displaying the obtained rows in a nice format
+        displayTable(headers, formattedRows);
+    }
+
 
     private void checkBikeAvailability()
     {
@@ -302,7 +330,7 @@ class UI
         // Initializing the Reserva repository
         ReservaRepository repo = new ReservaRepository();
 
-        // Getting all bikes from repo
+        // Getting all bookings from repo
         List<Reserva> rows = repo.getAll().stream().toList();
 
         // Creating table headers and rows to print
@@ -327,37 +355,57 @@ class UI
     {
         System.out.println("makeBooking()");
 
+        // Display existing clients
+        listExistingClients();
+        Integer clientId = Integer.parseInt(inputData("Select Client ID"));
+        PessoaRepository repoClients= new PessoaRepository();
+        Pessoa client = repoClients.findByKey(clientId);
+
         // Display existing stores
         listExistingStores();
-        Integer lojaCodigo = Integer.parseInt(inputData("Select Store Code"));
+        Integer storeCode = Integer.parseInt(inputData("Select Store Code"));
         LojaRepository repoStores = new LojaRepository();
-        Loja loja = repoStores.findByKey(lojaCodigo);
+        Loja store = repoStores.findByKey(storeCode);
 
         // Display existing bikes
         listExistingBikes();
-        Integer bicicletaId = Integer.parseInt(inputData("Select Bicycle ID"));
+        Integer bicycleId = Integer.parseInt(inputData("Select Bicycle ID"));
         BicicletaRepository repoBikes = new BicicletaRepository();
-        Bicicleta bicicleta = repoBikes.findByKey(bicicletaId);
+        Bicicleta bicycle = repoBikes.findByKey(bicycleId);
 
         // Collecting all necessary data
-        LocalDate dataInicio = LocalDate.parse(inputData("Input start date (FORMAT: 'YYYY-MM-DD')"));
-        LocalTime horaInicio = LocalTime.parse(inputData("Input start time (FORMAT: 'HH:MM:SS')"));
-        LocalDateTime dataInicioFinal = LocalDateTime.of(dataInicio, horaInicio);
+        LocalDate startDate = LocalDate.parse(inputData("Input start date (FORMAT: 'YYYY-MM-DD')"));
+        LocalTime startTime = LocalTime.parse(inputData("Input start time (FORMAT: 'HH:MM:SS')"));
+        LocalDateTime startDateFinal = LocalDateTime.of(startDate, startTime);
 
-        LocalDate dataFim = LocalDate.parse(inputData("Input end date (FORMAT: 'YYYY-MM-DD')"));
-        LocalTime horaFim = LocalTime.parse(inputData("Input end time (FORMAT: 'HH:MM:SS')"));
-        LocalDateTime dataFimFinal = LocalDateTime.of(dataFim, horaFim);
+        LocalDate endDate = LocalDate.parse(inputData("Input end date (FORMAT: 'YYYY-MM-DD')"));
+        LocalTime endTime = LocalTime.parse(inputData("Input end time (FORMAT: 'HH:MM:SS')"));
+        LocalDateTime endDateFinal = LocalDateTime.of(endDate, endTime);
 
-        Double valor = Double.parseDouble(inputData("Input booking value"));
+        Double value = Double.parseDouble(inputData("Input booking value"));
 
         // Creating a new Reserva object
-        Reserva booking = new Reserva(loja, dataInicioFinal, dataFimFinal, valor, bicicleta);
+        Reserva booking = new Reserva(store, startDateFinal, endDateFinal, value, bicycle);
 
         // Initializing the Reserva repository
-        ReservaRepository repo = new ReservaRepository();
+        ReservaRepository repoBookings = new ReservaRepository();
 
         // Sending booking to repository to be created
-        repo.create(booking);
+        repoBookings.create(booking);
+
+        // Getting booking number
+        Integer bookingNumber = booking.getId().getNoreserva();
+
+        // Creating a new ClienteReservaId object
+        ClienteReservaId clientBookingId = new ClienteReservaId(clientId, bookingNumber, storeCode);
+
+        // Creating a new ClienteReserva object
+        ClienteReserva clientBooking = new ClienteReserva(clientBookingId);
+
+        // Initializing the ClienteReserva repository
+        ClienteReservaRepository repoClientBookings = new ClienteReservaRepository();
+
+        repoClientBookings.create(clientBooking);
         
     }
 
@@ -381,8 +429,8 @@ class UI
         }
 
 
-        boolean simError = false;
-        if(simError)
+        boolean simulateError = false;
+        if(simulateError)
             repo.forceOptimisticLockingError();
     }
 
