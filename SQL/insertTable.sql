@@ -185,3 +185,22 @@ INSERT INTO Reserva (loja, dtinicio, dtfim, valor, bicicleta) VALUES
 	;
 	
 commit;
+
+DO $$
+DECLARE
+    reserva_id INTEGER;
+    pessoa_id INTEGER;
+    loja_id INTEGER;
+BEGIN
+    FOR reserva_id IN (SELECT noreserva FROM Reserva)
+    LOOP
+        -- Get the id of the Pessoa with the given noident
+        SELECT id INTO pessoa_id FROM Pessoa LIMIT 1;
+
+        -- Get the loja code of the Reserva with the given noreserva
+        SELECT loja INTO loja_id FROM Reserva WHERE noreserva = reserva_id;
+
+        -- Insert a new ClienteReserva entry
+        INSERT INTO ClienteReserva (cliente, reserva, loja) VALUES (pessoa_id, reserva_id, loja_id);
+    END LOOP;
+END; $$;
